@@ -7,6 +7,7 @@ import { FullPageSpinner } from '@/components/ui/States'
 import { useAuth } from '@/hooks/useAuth'
 import { HOME_BY_ROLE } from '@/hooks/useRole'
 import Login from '@/pages/Login'
+import { DemoBanner } from '@/components/DemoBanner'
 
 import StudentHome from '@/pages/student/Home'
 import StudentDrives from '@/pages/student/Drives'
@@ -33,6 +34,7 @@ function RoleRedirect() {
 export default function App() {
   return (
     <Suspense fallback={<FullPageSpinner />}>
+      <DemoBanner />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<RoleRedirect />} />

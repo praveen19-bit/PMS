@@ -18,6 +18,25 @@ frontend/   Vite React app (src/)
 render.yaml Render Blueprint for both services
 ```
 
+## Quick start: demo mode (no Supabase, no backend)
+
+Want to see the app before setting anything up? Run only the frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev        # open http://localhost:5173
+```
+
+When there's no Supabase config (or when `VITE_DEMO_MODE=true`), the app starts in **demo mode**:
+- Pick **Student, Faculty, Dean or Admin** on the login page.
+- You can also sign in with a demo email such as `ananya@demo.edu`, `meera@demo.edu`, `dean@demo.edu` or `admin@demo.edu`. The password is `demo1234`.
+- The app comes loaded with sample data: 3 batches, 19 students, about 5 weeks of attendance, 6 drives, and applications with interview history.
+- Everything works: applying, marking attendance, logging stages, posting drives, creating users. Users the admin creates can sign in too.
+- Data is saved in **this browser's localStorage only**. It isn't shared between browsers or devices. Use **Reset** in the top bar to restore the sample data.
+
+Demo mode applies the same role rules as the real API, but it is a preview, not a deployment. For real use, set up Supabase and the backend as described below.
+
 ## How security works
 
 - **Supabase Auth** issues the JWT. The frontend signs in with `supabase.auth.signInWithPassword` and sends the access token to FastAPI as `Authorization: Bearer …`.
@@ -62,7 +81,7 @@ python -m pytest -q
 cd frontend
 npm install
 cp .env.example .env        # VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_API_BASE_URL
-npm run dev                 # http://localhost:5173
+npm run dev                 # http://localhost:5173  (keep VITE_DEMO_MODE=false)
 ```
 
 ### RLS tests

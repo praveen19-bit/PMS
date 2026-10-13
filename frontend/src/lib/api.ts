@@ -1,4 +1,7 @@
 import { supabase } from './supabaseClient'
+import { ApiError } from './errors'
+import { DEMO_MODE } from './config'
+import { demoApi } from './demo/demoApi'
 import type {
   Analytics, Application, AttendanceStatus, Batch, BatchRoster, BatchStudent, Drive, DriveInput,
   FacultyAssignment, Me, MyAttendance, Role, StudentDetails, UserRow,
@@ -6,11 +9,7 @@ import type {
 
 const BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').replace(/\/$/, '')
 
-export class ApiError extends Error {
-  constructor(public status: number, message: string) {
-    super(message)
-  }
-}
+export { ApiError }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const { data } = await supabase.auth.getSession()
@@ -52,7 +51,7 @@ const qs = (params: Record<string, string | number | boolean | undefined | null>
 
 const json = (body: unknown) => JSON.stringify(body)
 
-export const api = {
+const realApi = {
   me: () => request<Me>('/auth/me'),
 
   // batches & assignments
@@ -99,3 +98,8 @@ export const api = {
 
   analytics: () => request<Analytics>('/analytics'),
 }
+
+export type Api = typeof realApi
+
+/** In demo mode every call is served from sample data in this browser. */
+export const api: Api = DEMO_MODE ? demoApi : realApi

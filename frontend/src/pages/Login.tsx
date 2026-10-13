@@ -6,7 +6,9 @@ import { Logo } from '@/components/ui/Logo'
 import { FullPageSpinner } from '@/components/ui/States'
 import { useAuth } from '@/hooks/useAuth'
 import { HOME_BY_ROLE } from '@/hooks/useRole'
-import { supabaseConfigured } from '@/lib/supabaseClient'
+import { DEMO_MODE } from '@/lib/config'
+import { DemoRolePicker } from '@/components/DemoRolePicker'
+import { resetDemo } from '@/components/DemoBanner'
 
 export default function Login() {
   const { session, initializing, me, meLoading, signIn } = useAuth()
@@ -53,15 +55,15 @@ export default function Login() {
           <h1 className="mt-8 text-3xl font-extrabold tracking-tight">
             Welcome <span className="text-accent-gradient">back</span>
           </h1>
-          <p className="mt-2 text-sm text-ink-mute">Sign in with the account issued by your placement cell.</p>
+          <p className="mt-2 text-sm text-ink-mute">
+            {DEMO_MODE ? 'Pick a role to explore the app with sample data.' : 'Sign in with the account issued by your placement cell.'}
+          </p>
 
-          {!supabaseConfigured && (
-            <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-              Supabase isn't configured. Set <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code>.
-            </p>
+          {DEMO_MODE && (
+            <div className="mt-8"><DemoRolePicker /></div>
           )}
 
-          <form onSubmit={onSubmit} className="mt-8 space-y-4">
+          <form onSubmit={onSubmit} className={DEMO_MODE ? 'mt-6 space-y-4 border-t border-line pt-6' : 'mt-8 space-y-4'}>
             <div>
               <label htmlFor="email" className="label">Email</label>
               <div className="relative">
@@ -82,9 +84,13 @@ export default function Login() {
             <Button type="submit" size="lg" block loading={busy}>Sign in</Button>
           </form>
 
-          <p className="mt-8 flex items-center gap-2 text-xs text-ink-mute">
-            <ShieldCheck className="h-4 w-4 text-emerald-500" /> Accounts are created by the placement cell admin.
-          </p>
+          {DEMO_MODE ? (
+            <button onClick={resetDemo} className="mt-6 text-xs font-semibold text-ink-mute hover:text-brand-600">Reset demo data</button>
+          ) : (
+            <p className="mt-8 flex items-center gap-2 text-xs text-ink-mute">
+              <ShieldCheck className="h-4 w-4 text-emerald-500" /> Accounts are created by the placement cell admin.
+            </p>
+          )}
         </div>
       </section>
     </div>
