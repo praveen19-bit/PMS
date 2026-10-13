@@ -28,9 +28,9 @@ export function DriveCard({ drive, onApply, applying, compact }: Props) {
   }
 
   return (
-    <Card className="flex flex-col p-5 transition hover:-translate-y-0.5">
+    <Card className="flex flex-col p-6 transition hover:-translate-y-0.5">
       <div className="flex items-start gap-3">
-        <Avatar name={drive.company_name} ring className="h-12 w-12" />
+        <Avatar name={drive.company_name} ring status={past ? 'closed' : d !== null && d <= 3 ? 'closing' : 'open'} className="h-12 w-12" />
         <div className="min-w-0 flex-1">
           <h3 className="truncate font-semibold">{drive.company_name}</h3>
           <p className="truncate text-xs text-ink-mute">{drive.role_offered}</p>

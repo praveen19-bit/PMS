@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { Field } from '@/components/ui/Field'
 import { useToast } from '@/components/ui/Toast'
+import { useFormValidation } from '@/hooks/useFormValidation'
+import { rules } from '@/lib/validate'
 import { EmptyState, ErrorState, ListSkeleton } from '@/components/ui/States'
 
 type Form = { name: string; department: string; year: number }
@@ -39,9 +41,14 @@ export default function AdminBatches() {
     onError: (e) => toast(e.message, 'error'),
   })
 
-  const startCreate = () => { setEditing(null); setForm({ name: '', department: '', year: new Date().getFullYear() }); setOpen(true) }
-  const startEdit = (b: Batch) => { setEditing(b); setForm({ name: b.name, department: b.department, year: b.year }); setOpen(true) }
-  const submit = (e: FormEvent) => { e.preventDefault(); save.mutate() }
+  const v = useFormValidation({
+    name: rules.required(form.name, 'Name'),
+    department: rules.required(form.department, 'Department'),
+    year: rules.range(Number(form.year), 2000, 2100, 'Year'),
+  })
+  const startCreate = () => { setEditing(null); setForm({ name: '', department: '', year: new Date().getFullYear() }); v.reset(); setOpen(true) }
+  const startEdit = (b: Batch) => { setEditing(b); setForm({ name: b.name, department: b.department, year: b.year }); v.reset(); setOpen(true) }
+  const submit = (e: FormEvent) => { e.preventDefault(); if (v.check()) save.mutate() }
 
   return (
     <>
@@ -55,7 +62,7 @@ export default function AdminBatches() {
           {batches.data.map((b) => {
             const s = stats.get(b.id)
             return (
-              <Card key={b.id} className="p-5">
+              <Card key={b.id} className="p-6">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <h3 className="truncate font-medium">{b.name}</h3>
@@ -78,10 +85,10 @@ export default function AdminBatches() {
 
       <Modal open={open} onClose={() => setOpen(false)} title={editing ? 'Edit batch' : 'New batch'}
         footer={<><Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button type="submit" form="batch-form" loading={save.isPending}>{editing ? 'Save' : 'Create'}</Button></>}>
-        <form id="batch-form" onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2"><Field label="Name" htmlFor="bname"><input id="bname" required className="input" placeholder="2026 CSE-A" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field></div>
-          <Field label="Department" htmlFor="bdept"><input id="bdept" required className="input" placeholder="CSE" value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} /></Field>
-          <Field label="Graduation year" htmlFor="byear"><input id="byear" type="number" required min={2000} max={2100} className="input" value={form.year} onChange={(e) => setForm({ ...form, year: Number(e.target.value) })} /></Field>
+        <form id="batch-form" noValidate onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2"><Field label="Name" htmlFor="bname" {...v.field('name')}><input id="bname" className="input" onBlur={v.blur('name')} placeholder="2026 CSE-A" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field></div>
+          <Field label="Department" htmlFor="bdept" {...v.field('department')}><input id="bdept" className="input" onBlur={v.blur('department')} placeholder="CSE" value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} /></Field>
+          <Field label="Graduation year" htmlFor="byear" {...v.field('year')}><input id="byear" type="number" className="input" onBlur={v.blur('year')} value={form.year} onChange={(e) => setForm({ ...form, year: Number(e.target.value) })} /></Field>
         </form>
       </Modal>
 

@@ -23,8 +23,8 @@ export function AttendanceGrid({ entries, value, onChange, dirty }: Props) {
       {entries.map((e) => {
         const current = value[e.student_id]
         return (
-          <li key={e.student_id} className="flex items-center gap-3 px-4 py-3 sm:px-5">
-            <Avatar name={e.full_name} ring className="hidden h-10 w-10 sm:grid" />
+          <li key={e.student_id} className="flex items-center gap-3 px-4 py-3 sm:px-6">
+            <Avatar name={e.full_name} ring status={current} className="hidden h-10 w-10 sm:grid" />
             <div className="min-w-0 flex-1">
               <p className="flex items-center gap-2 truncate text-sm font-medium">
                 {e.full_name}

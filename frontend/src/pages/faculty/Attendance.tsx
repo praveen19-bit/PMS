@@ -93,7 +93,7 @@ export default function FacultyAttendance() {
       </Card>
 
       <Card className="overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-6">
           <div className="flex flex-wrap gap-3 text-xs font-medium">
             <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-success" />{tally.present} present</span>
             <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-danger" />{tally.absent} absent</span>
@@ -107,11 +107,11 @@ export default function FacultyAttendance() {
         </div>
 
         {roster.isPending ? (
-          <div className="p-5"><ListSkeleton rows={4} /></div>
+          <div className="p-6"><ListSkeleton rows={4} /></div>
         ) : roster.isError ? (
-          <div className="p-5"><ErrorState message={roster.error.message} action={{ label: 'Retry', onClick: () => roster.refetch() }} /></div>
+          <div className="p-6"><ErrorState message={roster.error.message} action={{ label: 'Retry', onClick: () => roster.refetch() }} /></div>
         ) : roster.data.entries.length === 0 ? (
-          <div className="p-5"><EmptyState title="No students in this batch" message="Students will appear here once the admin adds them to the batch." /></div>
+          <div className="p-6"><EmptyState title="No students in this batch" message="Students will appear here once the admin adds them to the batch." /></div>
         ) : (
           <AttendanceGrid entries={roster.data.entries} value={marks} onChange={set} dirty={dirty} />
         )}

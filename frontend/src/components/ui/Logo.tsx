@@ -3,7 +3,7 @@ import { cn } from './cn'
 
 export function LogoMark({ className }: { className?: string }) {
   return (
-    <span className={cn('bg-grad grid h-10 w-10 shrink-0 place-items-center rounded-2xl text-white shadow-glow', className)}>
+    <span className={cn('bg-grad grid h-10 w-10 shrink-0 place-items-center rounded-xl text-white shadow-glow', className)}>
       <Zap className="h-5 w-5" fill="currentColor" />
     </span>
   )

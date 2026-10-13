@@ -39,7 +39,7 @@ export default function DeanAssignments() {
     <>
       <PageHeader eyebrow="Faculty ↔ batches" title="Assignments" subtitle="Faculty only see students in the batches assigned to them." />
 
-      <Card className="mb-6 p-5">
+      <Card className="mb-6 p-6">
         <div className="grid gap-4 md:grid-cols-[1fr_1fr_auto] md:items-end">
           <Field label="Faculty" htmlFor="fac">
             <select id="fac" className="input" value={facultyId} onChange={(e) => setFacultyId(e.target.value)}>
@@ -70,11 +70,11 @@ export default function DeanAssignments() {
               <Card key={b.id} className="pb-3">
                 <CardHeader title={b.name} subtitle={`${b.department} · ${b.year}`} />
                 {list.length === 0 ? (
-                  <p className="px-5 pt-3 text-sm text-ink-mute">No faculty assigned yet</p>
+                  <p className="px-6 pt-3 text-sm text-ink-mute">No faculty assigned yet</p>
                 ) : (
                   <ul className="mt-2">
                     {list.map((a) => (
-                      <li key={a.id} className="flex items-center gap-3 px-5 py-2">
+                      <li key={a.id} className="flex items-center gap-3 px-6 py-2">
                         <Avatar name={a.faculty_name ?? '?'} ring className="h-10 w-10" />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">{a.faculty_name}</p>

@@ -4,6 +4,8 @@ import { Pencil, Search, Trash2, UserPlus, Users as UsersIcon } from 'lucide-rea
 import { api } from '@/lib/api'
 import type { Role, UserRow } from '@/lib/types'
 import { useAuth } from '@/hooks/useAuth'
+import { useFormValidation } from '@/hooks/useFormValidation'
+import { rules } from '@/lib/validate'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -38,14 +40,23 @@ export default function AdminUsers() {
   const [form, setForm] = useState<FormState>(EMPTY)
   const [toDelete, setToDelete] = useState<UserRow | null>(null)
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => setForm((f) => ({ ...f, [k]: v }))
+  const isStudent = form.role === 'student'
+  const v = useFormValidation({
+    full_name: rules.required(form.full_name, 'Full name'),
+    email: editing ? null : rules.email(form.email),
+    password: editing ? null : rules.minLength(form.password, 8, 'Password'),
+    roll_no: isStudent ? rules.required(form.roll_no, 'Roll number') : null,
+    department: isStudent ? rules.required(form.department, 'Department') : null,
+  })
 
   const batchName = useMemo(() => new Map((batches.data ?? []).map((b) => [b.id, b.name])), [batches.data])
   const list = (users.data ?? [])
     .filter((u) => filter === 'all' || u.role === filter)
     .filter((u) => `${u.full_name} ${u.student?.roll_no ?? ''}`.toLowerCase().includes(q.trim().toLowerCase()))
 
-  const startCreate = () => { setEditing(null); setForm(EMPTY); setOpen(true) }
+  const startCreate = () => { setEditing(null); setForm(EMPTY); v.reset(); setOpen(true) }
   const startEdit = (u: UserRow) => {
+    v.reset()
     setEditing(u)
     setForm({ ...EMPTY, full_name: u.full_name, role: u.role, roll_no: u.student?.roll_no ?? '', department: u.student?.department ?? '', batch_id: u.student?.batch_id ?? '', is_fastrack: u.student?.is_fastrack ?? true })
     setOpen(true)
@@ -69,7 +80,7 @@ export default function AdminUsers() {
     onError: (e) => toast(e.message, 'error'),
   })
 
-  const submit = (e: FormEvent) => { e.preventDefault(); save.mutate() }
+  const submit = (e: FormEvent) => { e.preventDefault(); if (v.check()) save.mutate() }
   const counts = Object.fromEntries(ROLES.map((r) => [r, users.data?.filter((u) => u.role === r).length]))
 
   return (
@@ -94,7 +105,7 @@ export default function AdminUsers() {
         <Card className="overflow-hidden">
           <ul className="divide-y divide-line">
             {list.map((u) => (
-              <li key={u.id} className="flex items-center gap-3 px-4 py-3 sm:px-5">
+              <li key={u.id} className="flex items-center gap-3 px-4 py-3 sm:px-6">
                 <Avatar name={u.full_name} ring className="h-11 w-11" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{u.full_name}{u.id === me?.profile.id && <span className="ml-1 text-xs text-ink-mute">(you)</span>}</p>
@@ -113,12 +124,12 @@ export default function AdminUsers() {
 
       <Modal open={open} onClose={() => setOpen(false)} title={editing ? 'Edit user' : 'Add user'}
         footer={<><Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button type="submit" form="user-form" loading={save.isPending}>{editing ? 'Save' : 'Create user'}</Button></>}>
-        <form id="user-form" onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2"><Field label="Full name" htmlFor="name"><input id="name" required className="input" value={form.full_name} onChange={(e) => set('full_name', e.target.value)} /></Field></div>
+        <form id="user-form" noValidate onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2"><Field label="Full name" htmlFor="name" {...v.field('full_name')}><input id="name" className="input" onBlur={v.blur('full_name')} value={form.full_name} onChange={(e) => set('full_name', e.target.value)} /></Field></div>
           {!editing && (
             <>
-              <Field label="Email" htmlFor="email"><input id="email" type="email" required className="input" value={form.email} onChange={(e) => set('email', e.target.value)} /></Field>
-              <Field label="Temporary password" htmlFor="pw" hint="At least 8 characters"><input id="pw" type="text" minLength={8} required className="input" value={form.password} onChange={(e) => set('password', e.target.value)} /></Field>
+              <Field label="Email" htmlFor="email" {...v.field('email')}><input id="email" type="email" className="input" onBlur={v.blur('email')} value={form.email} onChange={(e) => set('email', e.target.value)} /></Field>
+              <Field label="Temporary password" htmlFor="pw" hint="At least 8 characters" {...v.field('password')}><input id="pw" type="text" className="input" onBlur={v.blur('password')} value={form.password} onChange={(e) => set('password', e.target.value)} /></Field>
             </>
           )}
           <div className="sm:col-span-2">
@@ -130,8 +141,8 @@ export default function AdminUsers() {
           </div>
           {form.role === 'student' && (
             <>
-              <Field label="Roll number" htmlFor="roll"><input id="roll" required className="input" value={form.roll_no} onChange={(e) => set('roll_no', e.target.value)} /></Field>
-              <Field label="Department" htmlFor="dept"><input id="dept" required className="input" placeholder="CSE" value={form.department} onChange={(e) => set('department', e.target.value)} /></Field>
+              <Field label="Roll number" htmlFor="roll" {...v.field('roll_no')}><input id="roll" className="input" onBlur={v.blur('roll_no')} value={form.roll_no} onChange={(e) => set('roll_no', e.target.value)} /></Field>
+              <Field label="Department" htmlFor="dept" {...v.field('department')}><input id="dept" className="input" onBlur={v.blur('department')} placeholder="CSE" value={form.department} onChange={(e) => set('department', e.target.value)} /></Field>
               <Field label="Batch" htmlFor="sbatch">
                 <select id="sbatch" className="input" value={form.batch_id} onChange={(e) => set('batch_id', e.target.value)}>
                   <option value="">No batch</option>

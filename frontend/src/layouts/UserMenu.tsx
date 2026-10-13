@@ -29,12 +29,12 @@ export function UserMenu() {
   return (
     <div ref={ref} className="relative">
       <button onClick={() => setOpen((o) => !o)} aria-haspopup="menu" aria-expanded={open} className="flex items-center gap-2 rounded-full transition hover:opacity-90">
-        <Avatar name={me.profile.full_name} ring className="h-11 w-11" />
+        <Avatar name={me.profile.full_name} ring status="online" className="h-11 w-11" />
       </button>
       {open && (
-        <div role="menu" className="glass-strong absolute right-0 top-[calc(100%+10px)] z-50 w-64 animate-fade-up rounded-3xl p-2">
+        <div role="menu" className="glass-strong absolute right-0 top-[calc(100%+10px)] z-50 w-64 animate-fade-up rounded-2xl p-2">
           <div className="flex items-center gap-3 px-3 pb-3 pt-2">
-            <Avatar name={me.profile.full_name} ring className="h-12 w-12" />
+            <Avatar name={me.profile.full_name} ring status="online" className="h-12 w-12" />
             <div className="min-w-0">
               <p className="truncate text-sm font-medium">{me.profile.full_name}</p>
               <p className="truncate text-xs text-ink-mute">{me.email}</p>

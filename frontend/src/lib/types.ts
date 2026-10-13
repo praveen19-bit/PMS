@@ -102,7 +102,10 @@ export interface StatusLogEntry {
   updated_by: string | null
   stage: string
   remarks: string | null
+  /** Optional 1–5 performance rating from faculty. */
+  rating?: number | null
   updated_at: string | null
+  updater_name?: string | null
 }
 
 export interface Application {
@@ -155,8 +158,15 @@ export interface BatchAttendanceStat {
   attendance_pct: number
 }
 
+/** Last 7 days vs the 7 days before. */
+export interface TrendPair {
+  current: number
+  previous: number
+}
+
 export interface Analytics {
   totals: Record<'batches' | 'students' | 'drives' | 'applications' | 'offers', number>
+  trends?: Partial<Record<'attendance_pct' | 'applications' | 'offers', TrendPair>>
   batch_attendance: BatchAttendanceStat[]
   funnel: { stage: string; count: number }[]
   stage_counts: { stage: string; count: number }[]

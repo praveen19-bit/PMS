@@ -1,6 +1,9 @@
 import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
-import { CalendarCheck, Eye, EyeOff, LineChart, MessagesSquare } from 'lucide-react'
+import { AlertCircle, CalendarCheck, Eye, EyeOff, LineChart, MessagesSquare } from 'lucide-react'
+import { Field } from '@/components/ui/Field'
+import { useFormValidation } from '@/hooks/useFormValidation'
+import { rules } from '@/lib/validate'
 import { Button } from '@/components/ui/Button'
 import { Logo } from '@/components/ui/Logo'
 import { Card } from '@/components/ui/Card'
@@ -21,8 +24,8 @@ function HeroCurve() {
     <svg viewBox="0 0 400 150" className="h-40 w-full" aria-hidden>
       <defs>
         <linearGradient id="hc-fill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#6366F1" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="#6366F1" stopOpacity="0" />
+          <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.32" />
+          <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0" />
         </linearGradient>
       </defs>
       {[30, 65, 100, 135].map((y) => <line key={y} x1="0" x2="400" y1={y} y2={y} stroke={c.grid} />)}
@@ -40,6 +43,7 @@ export default function Login() {
   const [show, setShow] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const v = useFormValidation({ email: rules.email(email), password: rules.required(password, 'Password') })
 
   if (initializing || (session && meLoading)) return <FullPageSpinner />
   if (session && me) return <Navigate to={HOME_BY_ROLE[me.profile.role]} replace />
@@ -47,6 +51,7 @@ export default function Login() {
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError(null)
+    if (!v.check()) return
     setBusy(true)
     try {
       await signIn(email.trim(), password)
@@ -76,7 +81,7 @@ export default function Login() {
           Placements, <span className="text-grad">on track.</span>
         </h2>
         <p className="mt-3 max-w-md text-ink-soft">Attendance, company drives and interview progress for your fastrack batches — all in one place.</p>
-        <Card className="mt-8 p-5">
+        <Card className="mt-8 p-6">
           <p className="text-sm font-medium">placement progress</p>
           <HeroCurve />
         </Card>
@@ -104,25 +109,28 @@ export default function Login() {
 
           {DEMO_MODE && <div className="mt-6"><DemoRolePicker /></div>}
 
-          <form onSubmit={onSubmit} className={DEMO_MODE ? 'mt-6 space-y-4 border-t border-line pt-6' : 'mt-8 space-y-4'}>
+          <form noValidate onSubmit={onSubmit} className={DEMO_MODE ? 'mt-6 space-y-4 border-t border-line pt-6' : 'mt-8 space-y-4'}>
+            <Field label="Email" htmlFor="email" {...v.field('email')}>
+              <input id="email" type="email" autoComplete="email" className="input" placeholder="username@mail.com"
+                value={email} onChange={(e) => setEmail(e.target.value)} onBlur={v.blur('email')} />
+            </Field>
             <div>
-              <label htmlFor="email" className="label">user name or email :</label>
-              <input id="email" type="email" autoComplete="email" required className="input" placeholder="username@mail.com"
-                value={email} onChange={(e) => setEmail(e.target.value)} />
-            </div>
-            <div>
-              <label htmlFor="password" className="label">password :</label>
+              <label htmlFor="password" className="label">Password</label>
               <div className="relative">
-                <input id="password" type={show ? 'text' : 'password'} autoComplete="current-password" required className="input pr-12" placeholder="••••••••"
-                  value={password} onChange={(e) => setPassword(e.target.value)} />
+                <input id="password" type={show ? 'text' : 'password'} autoComplete="current-password" className="input pr-12" placeholder="Enter your password"
+                  value={password} onChange={(e) => setPassword(e.target.value)} onBlur={v.blur('password')}
+                  aria-invalid={v.field('password').error ? true : undefined} aria-describedby={v.field('password').error ? 'password-msg' : undefined} />
                 <button type="button" onClick={() => setShow((s) => !s)} aria-label={show ? 'Hide password' : 'Show password'}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-mute hover:text-brand-600">
                   {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {!DEMO_MODE && <p className="mt-1.5 text-right text-[11px] text-brand-500">Forgot password? Ask your placement admin.</p>}
+              {v.field('password').error && (
+                <p id="password-msg" className="mt-1.5 flex items-center gap-1 text-xs text-danger" role="alert"><AlertCircle className="h-3.5 w-3.5" />{v.field('password').error}</p>
+              )}
+              {!DEMO_MODE && <p className="mt-1.5 text-right text-[11px] text-brand-600">Forgot password? Ask your placement admin.</p>}
             </div>
-            {error && <p className="rounded-2xl bg-danger/15 px-4 py-2.5 text-sm text-danger" role="alert">{error}</p>}
+            {error && <p className="rounded-xl bg-danger/15 px-4 py-2.5 text-sm text-danger" role="alert">{error}</p>}
             <Button type="submit" size="lg" block loading={busy}>login</Button>
           </form>
 

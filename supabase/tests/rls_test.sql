@@ -37,7 +37,8 @@ end $$;
 -- ---------- student A1 ----------
 select pg_temp.act_as('00000000-0000-0000-0000-0000000000a1') \g /dev/null
 do $$ begin
-  assert (select count(*) from profiles) = 1, 'student sees only own profile';
+  assert (select count(*) from profiles where role = 'student') = 1, 'student sees only own student profile';
+  assert (select count(*) from profiles where role <> 'student') = 4, 'student sees staff names';
   assert (select count(*) from student_profiles) = 1, 'student sees only own student_profile';
   assert (select count(*) from company_drives) = 1, 'student reads drives';
 end $$;
@@ -82,10 +83,16 @@ do $$ begin
     raise exception 'faculty marked attendance outside batch';
   exception when insufficient_privilege then null; end;
 end $$;
-insert into interview_status_log (application_id, updated_by, stage)
-  select id, '00000000-0000-0000-0000-0000000000f1', 'round1_completed' from drive_applications;
+insert into interview_status_log (application_id, updated_by, stage, rating)
+  select id, '00000000-0000-0000-0000-0000000000f1', 'round1_completed', 4 from drive_applications;
 do $$ begin
+  begin
+    insert into interview_status_log (application_id, updated_by, stage, rating)
+      select id, '00000000-0000-0000-0000-0000000000f1', 'hr_round', 9 from drive_applications;
+    raise exception 'rating outside 1..5 accepted';
+  exception when check_violation then null; end;
   assert (select current_stage from drive_applications) = 'round1_completed', 'stage trigger syncs';
+  assert (select sum(applications) from daily_applications) = 1, 'daily_applications view';
   assert (select count(*) from batch_attendance_summary where total_marked > 0) = 1, 'view respects RLS';
 end $$;
 reset role;
@@ -112,6 +119,8 @@ end $$;
 select pg_temp.act_as('00000000-0000-0000-0000-0000000000a1') \g /dev/null
 do $$ begin
   assert (select count(*) from interview_status_log) = 1, 'student reads own log';
+  assert (select rating from interview_status_log) = 4, 'student reads rating';
+  assert (select count(*) from daily_attendance) = 1, 'student daily_attendance limited to own rows';
   assert (select count(*) from attendance) = 1, 'student reads own attendance';
 end $$;
 reset role;

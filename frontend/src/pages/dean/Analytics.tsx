@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, LabelList, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { ArrowUpDown, Briefcase, GraduationCap, Plus, Send, Table2, Trophy } from 'lucide-react'
+import { ArrowUpDown, CalendarCheck, GraduationCap, Plus, Send, Table2, Trophy } from 'lucide-react'
 import { api } from '@/lib/api'
 import { stageLabel } from '@/lib/format'
 import { PageHeader } from '@/components/ui/PageHeader'
@@ -29,7 +29,7 @@ export default function DeanAnalytics() {
     )
   if (q.isError) return <ErrorState message={q.error.message} action={{ label: 'Retry', onClick: () => q.refetch() }} />
 
-  const { totals, batch_attendance, funnel, stage_counts } = q.data
+  const { totals, batch_attendance, funnel, stage_counts, trends: tr } = q.data
   let att = batch_attendance.map((b) => ({ name: b.batch_name, pct: Number(b.attendance_pct), students: b.student_count, marked: b.total_marked }))
   if (sortDesc) att = [...att].sort((a, b) => b.pct - a.pct)
   const best = att.reduce((bi, b, i, arr) => (b.pct > arr[bi]!.pct ? i : bi), 0)
@@ -52,18 +52,27 @@ export default function DeanAnalytics() {
       />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="students" value={totals.students} tone="neutral" hint={`${totals.batches} batches`} icon={<GraduationCap className="h-4 w-4" />} />
-        <StatCard label="drives" value={totals.drives} pink icon={<Briefcase className="h-4 w-4" />} />
-        <StatCard label="applications" value={totals.applications} tone="brand" icon={<Send className="h-4 w-4" />} />
-        <StatCard label="offers" value={totals.offers} tone="success" hint={`${placementRate}% of students`} icon={<Trophy className="h-4 w-4" />} />
+        <StatCard label="students" value={totals.students} tone="neutral" hint={`${totals.batches} batches · ${totals.drives} drives`} icon={<GraduationCap className="h-4 w-4" />} />
+        <StatCard
+          label="attendance · last 7 days" value={`${Math.round(tr?.attendance_pct?.current ?? 0)}%`} pink icon={<CalendarCheck className="h-4 w-4" />}
+          trend={tr?.attendance_pct ? { delta: tr.attendance_pct.current - tr.attendance_pct.previous, unit: ' pts', label: 'vs previous week' } : undefined}
+        />
+        <StatCard
+          label="applications" value={totals.applications} tone="brand" icon={<Send className="h-4 w-4" />}
+          trend={tr?.applications ? { delta: tr.applications.current - tr.applications.previous, unit: '', label: `this week vs last (${tr.applications.current} new)` } : undefined}
+        />
+        <StatCard
+          label="offers" value={totals.offers} tone="success" icon={<Trophy className="h-4 w-4" />}
+          trend={tr?.offers ? { delta: tr.offers.current - tr.offers.previous, unit: '', label: `this week · ${placementRate}% placed` } : undefined}
+        />
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-12 [&>*]:min-w-0">
         {/* graphic update: funnel */}
         <Card className="lg:col-span-7">
           <CardHeader title="placement funnel" subtitle="Applications at or beyond each stage" />
-          {totals.applications === 0 ? <div className="p-5"><EmptyState title="No applications yet" /></div> : (
-            <div className="p-5 pt-2">
+          {totals.applications === 0 ? <div className="p-6"><EmptyState title="No applications yet" /></div> : (
+            <div className="p-6 pt-2">
               <div className="h-60">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={funnelData} margin={{ top: 34, right: 12, left: -18, bottom: 0 }}>
@@ -107,7 +116,7 @@ export default function DeanAnalytics() {
               </>
             }
           />
-          {att.length === 0 ? <div className="p-5"><EmptyState title="No batches yet" /></div> : attTable ? (
+          {att.length === 0 ? <div className="p-6"><EmptyState title="No batches yet" /></div> : attTable ? (
             <table className="mx-5 my-4 w-[calc(100%-2.5rem)] text-left text-sm">
               <thead className="text-xs text-ink-mute"><tr><th className="py-2 font-normal">Batch</th><th className="font-normal">Students</th><th className="text-right font-normal">Present</th></tr></thead>
               <tbody className="divide-y divide-line">
@@ -139,7 +148,7 @@ export default function DeanAnalytics() {
         {/* stage distribution */}
         <Card className="lg:col-span-12">
           <CardHeader title="where applications stand" subtitle="Current stage of every application" />
-          <ul className="grid gap-x-8 gap-y-4 p-5 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid gap-x-8 gap-y-4 p-6 sm:grid-cols-2 lg:grid-cols-3">
             {stage_counts.map((s) => (
               <li key={s.stage}>
                 <div className="mb-1.5 flex items-center justify-between text-xs">

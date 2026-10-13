@@ -205,7 +205,9 @@ class StatusLogEntry(_Model):
     updated_by: str | None = None
     stage: str
     remarks: str | None = None
+    rating: int | None = None
     updated_at: datetime | None = None
+    updater_name: str | None = None
 
 
 class DriveBrief(_Model):
@@ -232,6 +234,7 @@ class Application(_Model):
 class StageUpdate(_Model):
     stage: Stage
     remarks: str | None = Field(default=None, max_length=500)
+    rating: int | None = Field(default=None, ge=1, le=5)
 
 
 # ---------------------------------------------------------------- users
@@ -283,8 +286,16 @@ class FunnelStep(_Model):
     count: int
 
 
+class TrendPair(_Model):
+    """Value for the last 7 days vs the 7 days before."""
+
+    current: float
+    previous: float
+
+
 class Analytics(_Model):
     totals: dict[str, int]
+    trends: dict[str, TrendPair] = {}
     batch_attendance: list[BatchAttendanceStat]
     funnel: list[FunnelStep]
     stage_counts: list[FunnelStep]

@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { Field } from '@/components/ui/Field'
+import { StarInput } from '@/components/ui/Stars'
 import { useToast } from '@/components/ui/Toast'
 import { EmptyState, ErrorState, ListSkeleton } from '@/components/ui/States'
 import { ApplicationTimeline } from '@/components/ApplicationTimeline'
@@ -26,6 +27,7 @@ export default function FacultyInterviews() {
   const [expanded, setExpanded] = useState<string | null>(null)
   const [stage, setStage] = useState('')
   const [remarks, setRemarks] = useState('')
+  const [rating, setRating] = useState<number | null>(null)
   const qc = useQueryClient()
   const toast = useToast()
 
@@ -33,7 +35,7 @@ export default function FacultyInterviews() {
   const apps = useQuery({ queryKey: ['applications', selected], queryFn: () => api.applications({ batch_id: selected }), enabled: Boolean(selected) })
 
   const log = useMutation({
-    mutationFn: () => api.logStage(editing!.id, stage, remarks.trim() || undefined),
+    mutationFn: () => api.logStage(editing!.id, stage, remarks.trim() || undefined, rating),
     onSuccess: (a) => {
       toast(`${a.student_name ?? 'Student'} → ${stageLabel(a.current_stage)}`)
       qc.invalidateQueries({ queryKey: ['applications'] })
@@ -46,6 +48,7 @@ export default function FacultyInterviews() {
     const next = stages.data?.[Math.min((stages.data?.indexOf(a.current_stage) ?? 0) + 1, stages.data.length - 1)]
     setStage(next ?? a.current_stage)
     setRemarks('')
+    setRating(null)
     setEditing(a)
   }
 
@@ -90,7 +93,7 @@ export default function FacultyInterviews() {
           <ul className="divide-y divide-line">
             {list.map((a) => (
               <li key={a.id}>
-                <div className="flex flex-col gap-3 px-4 py-3.5 sm:flex-row sm:items-center sm:px-5">
+                <div className="flex flex-col gap-3 px-4 py-3.5 sm:flex-row sm:items-center sm:px-6">
                   <button className="flex min-w-0 flex-1 items-center gap-3 text-left" onClick={() => setExpanded(expanded === a.id ? null : a.id)} aria-expanded={expanded === a.id}>
                     <ChevronDown className={`h-4 w-4 shrink-0 text-ink-mute transition ${expanded === a.id ? 'rotate-180' : ''}`} />
                     <div className="min-w-0">
@@ -104,7 +107,7 @@ export default function FacultyInterviews() {
                   </div>
                 </div>
                 {expanded === a.id && (
-                  <div className="border-t border-line bg-subtle/40 px-5 py-4 sm:pl-12"><ApplicationTimeline app={a} /></div>
+                  <div className="border-t border-line bg-subtle/40 px-6 py-4 sm:pl-12"><ApplicationTimeline app={a} /></div>
                 )}
               </li>
             ))}
@@ -132,7 +135,11 @@ export default function FacultyInterviews() {
               ))}
             </select>
           </Field>
-          <Field label="Remarks (optional)" htmlFor="remarks">
+          <div>
+            <p className="label">Performance rating (optional)</p>
+            <StarInput value={rating} onChange={setRating} label="Performance rating" />
+          </div>
+          <Field label="Feedback for the student (optional)" htmlFor="remarks" hint="Shown to the student as a review card on their application.">
             <textarea id="remarks" rows={3} maxLength={500} className="input resize-none" placeholder="e.g. Cleared technical round, HR on Friday" value={remarks} onChange={(e) => setRemarks(e.target.value)} />
           </Field>
           {stage && ['offered', 'rejected', 'withdrawn'].includes(stage) && (

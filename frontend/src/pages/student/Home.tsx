@@ -8,7 +8,7 @@ import type { AttendanceRecord } from '@/lib/types'
 import { fmtDate, stageLabel, stageTone, todayISO } from '@/lib/format'
 import { useAuth } from '@/hooks/useAuth'
 import { useApply } from '@/hooks/useApply'
-import { Card, CardHeader, Progress } from '@/components/ui/Card'
+import { Card, CardHeader, Progress, Trend } from '@/components/ui/Card'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
 import { EmptyState, ErrorState, ListSkeleton, Skeleton } from '@/components/ui/States'
@@ -35,6 +35,21 @@ function weeklyPresence(records: AttendanceRecord[]) {
     .map(([monday, w]) => ({ name: fmtDate(monday, { day: 'numeric', month: 'short' }), pct: Math.round((100 * w.present) / w.total) }))
 }
 
+/** % present in the last 7 days vs the 7 before (null if either week is empty). */
+function lastTwoWeeks(records: AttendanceRecord[]) {
+  const today = new Date(`${todayISO()}T00:00:00`).getTime()
+  const w = [{ p: 0, t: 0 }, { p: 0, t: 0 }]
+  for (const r of records) {
+    const age = Math.round((today - new Date(`${r.date}T00:00:00`).getTime()) / 86_400_000)
+    const bucket = age >= 0 && age < 7 ? w[0] : age >= 7 && age < 14 ? w[1] : null
+    if (!bucket) continue
+    bucket.t += 1
+    if (r.status === 'present') bucket.p += 1
+  }
+  if (!w[0]!.t || !w[1]!.t) return null
+  return { current: Math.round((100 * w[0]!.p) / w[0]!.t), previous: Math.round((100 * w[1]!.p) / w[1]!.t) }
+}
+
 export default function StudentHome() {
   const { me } = useAuth()
   const firstName = me?.profile.full_name.split(' ')[0] ?? ''
@@ -47,6 +62,7 @@ export default function StudentHome() {
 
   const s = attendance.data?.summary
   const weekly = useMemo(() => weeklyPresence(attendance.data?.records ?? []), [attendance.data])
+  const weekTrend = useMemo(() => lastTwoWeeks(attendance.data?.records ?? []), [attendance.data])
   const active = apps.data?.filter(applicationIsActive) ?? []
   const offers = apps.data?.filter((a) => a.current_stage === 'offered') ?? []
   const upcoming = drives.data ?? []
@@ -75,8 +91,8 @@ export default function StudentHome() {
         {/* highlight update: upcoming drives as story circles */}
         <Card className="lg:col-span-7">
           <CardHeader title="upcoming drives" subtitle="Tap to browse and apply" />
-          {drives.isPending ? <div className="p-5"><Skeleton className="h-20" /></div> : upcoming.length === 0 ? (
-            <p className="px-5 pb-5 pt-3 text-sm text-ink-mute">No upcoming drives for your department yet.</p>
+          {drives.isPending ? <div className="p-6"><Skeleton className="h-20" /></div> : upcoming.length === 0 ? (
+            <p className="px-6 pb-6 pt-3 text-sm text-ink-mute">No upcoming drives for your department yet.</p>
           ) : (
             <div className="flex items-center gap-2 px-3 pb-4 pt-3">
               <ul className="flex flex-1 gap-4 overflow-x-auto px-2 pb-1 scrollbar-none">
@@ -100,8 +116,8 @@ export default function StudentHome() {
         <Card className="lg:col-span-5">
           <CardHeader title="in progress" subtitle={`${active.length} active application${active.length === 1 ? '' : 's'}`}
             action={<Link to="/student/applications" className="text-xs font-medium text-brand-600">view all</Link>} />
-          {apps.isPending ? <div className="p-5"><Skeleton className="h-16" /></div> : active.length === 0 ? (
-            <p className="px-5 pb-5 pt-3 text-sm text-ink-mute">No active applications yet.</p>
+          {apps.isPending ? <div className="p-6"><Skeleton className="h-16" /></div> : active.length === 0 ? (
+            <p className="px-6 pb-6 pt-3 text-sm text-ink-mute">No active applications yet.</p>
           ) : (
             <ul className="p-3">
               {active.slice(0, 3).map((a) => (
@@ -123,10 +139,10 @@ export default function StudentHome() {
         {/* graphic update: attendance trend */}
         <Card className="lg:col-span-7">
           <CardHeader title="attendance update" subtitle="Share of days present, by week" />
-          {attendance.isPending ? <div className="p-5"><Skeleton className="h-56" /></div> : attendance.isError ? (
-            <p className="p-5 text-sm text-danger">{attendance.error.message}</p>
+          {attendance.isPending ? <div className="p-6"><Skeleton className="h-56" /></div> : attendance.isError ? (
+            <p className="p-6 text-sm text-danger">{attendance.error.message}</p>
           ) : (
-            <div className="p-5 pt-2">
+            <div className="p-6 pt-2">
               {weekly.length > 1 ? (
                 <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
@@ -157,6 +173,7 @@ export default function StudentHome() {
                   </div>
                 ))}
               </dl>
+              {weekTrend && <div className="mt-3"><Trend delta={weekTrend.current - weekTrend.previous} unit=" pts" label={`this week (${weekTrend.current}%) vs last week`} /></div>}
               <div className="mt-4"><Progress value={s!.attendance_pct} label="attendance target 75%" /></div>
             </div>
           )}

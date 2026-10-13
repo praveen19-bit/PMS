@@ -21,9 +21,9 @@ const variants: Record<Variant, string> = {
   danger: 'bg-surface text-danger ring-1 ring-inset ring-danger/30 hover:bg-danger/10',
 }
 const sizes: Record<Size, string> = {
-  sm: 'h-8 px-4 text-xs gap-1.5',
-  md: 'h-10 px-5 text-sm gap-2',
-  lg: 'h-12 px-7 text-[15px] gap-2',
+  sm: 'h-8 px-3 text-xs gap-1.5 rounded-lg',
+  md: 'h-10 px-4 text-sm gap-2',
+  lg: 'h-12 px-6 text-base gap-2',
 }
 
 export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
@@ -35,7 +35,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
       ref={ref}
       disabled={disabled || loading}
       className={cn(
-        'inline-flex select-none items-center justify-center whitespace-nowrap rounded-full font-medium transition active:scale-[0.98]',
+        'inline-flex select-none items-center justify-center whitespace-nowrap rounded-xl font-medium transition active:scale-[0.98]',
         'disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none',
         variants[variant],
         sizes[size],

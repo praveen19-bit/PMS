@@ -15,18 +15,23 @@ interface Props {
 export function Modal({ open, onClose, title, description, children, footer }: Props) {
   const panel = useRef<HTMLDivElement>(null)
 
+  // Keep the latest onClose without re-running the effects below on every render.
+  const closeRef = useRef(onClose)
+  closeRef.current = onClose
+
   useEffect(() => {
     if (!open) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && closeRef.current()
     document.addEventListener('keydown', onKey)
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+    // Focus the first field once, when the dialog opens.
     panel.current?.querySelector<HTMLElement>('input,select,textarea')?.focus()
     return () => {
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = prev
     }
-  }, [open, onClose])
+  }, [open])
 
   if (!open) return null
   return createPortal(
@@ -37,7 +42,7 @@ export function Modal({ open, onClose, title, description, children, footer }: P
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="glass-strong sheen relative flex max-h-[92vh] w-full animate-fade-up flex-col rounded-t-4xl sm:max-w-lg sm:rounded-4xl"
+        className="glass-strong sheen relative flex max-h-[92vh] w-full animate-fade-up flex-col rounded-t-2xl sm:max-w-lg sm:rounded-2xl"
       >
         <div className="mx-auto mt-2 h-1 w-10 rounded-full bg-brand-200 sm:hidden" aria-hidden />
         <div className="flex items-start justify-between gap-4 px-6 pb-3 pt-4 sm:pt-6">
@@ -45,7 +50,7 @@ export function Modal({ open, onClose, title, description, children, footer }: P
             <h2 className="text-lg font-semibold">{title}</h2>
             {description && <p className="mt-0.5 text-sm text-ink-mute">{description}</p>}
           </div>
-          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-full bg-subtle text-ink-soft hover:bg-brand-50 hover:text-brand-600">
+          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-lg bg-subtle text-ink-soft hover:bg-brand-50 hover:text-brand-600">
             <X className="h-4 w-4" />
           </button>
         </div>

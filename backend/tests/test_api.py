@@ -1,4 +1,5 @@
 import json
+from datetime import date, timedelta
 
 import httpx
 
@@ -162,13 +163,45 @@ def test_analytics_funnel(client, as_role, respx_mock):
         {"stage": "offered", "count": 1}, {"stage": "rejected", "count": 2},
     ])
     respx_mock.get(f"{REST}/company_drives").respond(json=[{"id": "d1"}])
+    today = date.today()
+    respx_mock.get(f"{REST}/daily_attendance").respond(json=[
+        {"day": today.isoformat(), "total": 10, "present": 9},
+        {"day": (today - timedelta(days=8)).isoformat(), "total": 10, "present": 7},
+    ])
+    respx_mock.get(f"{REST}/daily_applications").respond(json=[
+        {"day": today.isoformat(), "applications": 6}, {"day": (today - timedelta(days=10)).isoformat(), "applications": 4},
+    ])
+    respx_mock.get(f"{REST}/daily_offers").respond(json=[])
     r = client.get("/analytics", headers=h)
     assert r.status_code == 200, r.text
     body = r.json()
     funnel = {s["stage"]: s["count"] for s in body["funnel"]}
     assert funnel == {"applied": 10, "shortlisted": 3, "round1_completed": 3, "hr_round": 1, "offered": 1}
     assert body["totals"]["offers"] == 1
+    assert body["trends"]["attendance_pct"] == {"current": 90.0, "previous": 70.0}
+    assert body["trends"]["applications"] == {"current": 6.0, "previous": 4.0}
+    assert body["trends"]["offers"] == {"current": 0.0, "previous": 0.0}
 
 
 def test_faculty_cannot_read_analytics(client, as_role):
     assert client.get("/analytics", headers=as_role("faculty")).status_code == 403
+
+
+def test_log_stage_with_rating_and_reviewer_name(client, as_role, respx_mock):
+    h = as_role("faculty", "fac-1")
+    respx_mock.get(f"{REST}/drive_applications").respond(json=[{
+        "id": "a1", "drive_id": "d1", "student_id": "s1", "current_stage": "applied",
+        "history": [{"id": "l1", "application_id": "a1", "stage": "shortlisted", "rating": 4,
+                     "updated_at": "2026-01-01T00:00:00Z", "updater": {"full_name": "Dr. Meera"}}],
+    }])
+    route = respx_mock.post(f"{REST}/interview_status_log").respond(201, json=[{"id": "l1"}])
+    r = client.post("/applications/a1/stages", headers=h, json={"stage": "shortlisted", "rating": 4, "remarks": "Good"})
+    assert r.status_code == 201, r.text
+    assert json.loads(route.calls.last.request.content)["rating"] == 4
+    entry = r.json()["history"][0]
+    assert entry["rating"] == 4 and entry["updater_name"] == "Dr. Meera"
+
+
+def test_rating_out_of_range_rejected(client, as_role):
+    h = as_role("faculty")
+    assert client.post("/applications/a1/stages", headers=h, json={"stage": "shortlisted", "rating": 6}).status_code == 422

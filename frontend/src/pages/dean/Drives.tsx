@@ -3,7 +3,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Briefcase, Pencil, Plus, Trash2, Users } from 'lucide-react'
 import { api } from '@/lib/api'
 import type { Drive, DriveInput } from '@/lib/types'
-import { daysUntil, fmtDate } from '@/lib/format'
+import { daysUntil, fmtDate, todayISO } from '@/lib/format'
+import { rules } from '@/lib/validate'
+import { useFormValidation } from '@/hooks/useFormValidation'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -25,8 +27,15 @@ export default function DeanDrives() {
   const [depts, setDepts] = useState('')
   const [toDelete, setToDelete] = useState<Drive | null>(null)
 
-  const startCreate = () => { setEditing(null); setForm(EMPTY); setDepts(''); setOpen(true) }
+  const v = useFormValidation({
+    company_name: rules.required(form.company_name, 'Company'),
+    role_offered: rules.required(form.role_offered, 'Role'),
+    drive_date: !editing && form.drive_date && form.drive_date < todayISO() ? "A new drive can't be in the past" : null,
+  })
+
+  const startCreate = () => { setEditing(null); setForm(EMPTY); setDepts(''); v.reset(); setOpen(true) }
   const startEdit = (d: Drive) => {
+    v.reset()
     setEditing(d)
     setForm({ company_name: d.company_name, role_offered: d.role_offered, ctc: d.ctc ?? '', eligibility_criteria: d.eligibility_criteria ?? '', eligible_departments: d.eligible_departments, drive_date: d.drive_date ?? '' })
     setDepts(d.eligible_departments.join(', '))
@@ -60,7 +69,7 @@ export default function DeanDrives() {
     onError: (e) => toast(e.message, 'error'),
   })
 
-  const submit = (e: FormEvent) => { e.preventDefault(); save.mutate() }
+  const submit = (e: FormEvent) => { e.preventDefault(); if (v.check()) save.mutate() }
   const set = <K extends keyof DriveInput>(k: K, v: DriveInput[K]) => setForm((f) => ({ ...f, [k]: v }))
 
   return (
@@ -77,14 +86,14 @@ export default function DeanDrives() {
           <div className="hidden md:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-line text-xs text-ink-mute">
-                <tr><th className="px-5 py-3 font-medium">Company</th><th className="font-medium">CTC</th><th className="font-medium">Date</th><th className="font-medium">Departments</th><th className="font-medium">Applicants</th><th /></tr>
+                <tr><th className="px-6 py-3 font-medium">Company</th><th className="font-medium">CTC</th><th className="font-medium">Date</th><th className="font-medium">Departments</th><th className="font-medium">Applicants</th><th /></tr>
               </thead>
               <tbody className="divide-y divide-line">
                 {drives.data.map((d) => {
                   const past = (daysUntil(d.drive_date) ?? 0) < 0
                   return (
                     <tr key={d.id} className="hover:bg-brand-50/60">
-                      <td className="px-5 py-3"><p className="font-medium">{d.company_name}</p><p className="text-xs text-ink-mute">{d.role_offered}</p></td>
+                      <td className="px-6 py-3"><p className="font-medium">{d.company_name}</p><p className="text-xs text-ink-mute">{d.role_offered}</p></td>
                       <td className="font-medium text-brand-700">{d.ctc || '—'}</td>
                       <td><span className="flex items-center gap-2">{fmtDate(d.drive_date)}{past && <Badge>Past</Badge>}</span></td>
                       <td className="text-xs text-ink-soft">{d.eligible_departments.join(', ') || 'All'}</td>
@@ -116,11 +125,11 @@ export default function DeanDrives() {
 
       <Modal open={open} onClose={() => setOpen(false)} title={editing ? 'Edit drive' : 'New drive'}
         footer={<><Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button type="submit" form="drive-form" loading={save.isPending}>{editing ? 'Save changes' : 'Post drive'}</Button></>}>
-        <form id="drive-form" onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
-          <Field label="Company" htmlFor="company"><input id="company" required className="input" value={form.company_name} onChange={(e) => set('company_name', e.target.value)} /></Field>
-          <Field label="Role offered" htmlFor="role"><input id="role" required className="input" value={form.role_offered} onChange={(e) => set('role_offered', e.target.value)} /></Field>
+        <form id="drive-form" noValidate onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+          <Field label="Company" htmlFor="company" {...v.field('company_name')}><input id="company" className="input" onBlur={v.blur('company_name')} value={form.company_name} onChange={(e) => set('company_name', e.target.value)} /></Field>
+          <Field label="Role offered" htmlFor="role" {...v.field('role_offered')}><input id="role" className="input" onBlur={v.blur('role_offered')} value={form.role_offered} onChange={(e) => set('role_offered', e.target.value)} /></Field>
           <Field label="CTC" htmlFor="ctc"><input id="ctc" className="input" placeholder="e.g. 8 LPA" value={form.ctc ?? ''} onChange={(e) => set('ctc', e.target.value)} /></Field>
-          <Field label="Drive date" htmlFor="date"><input id="date" type="date" className="input" value={form.drive_date ?? ''} onChange={(e) => set('drive_date', e.target.value)} /></Field>
+          <Field label="Drive date" htmlFor="date" {...v.field('drive_date')}><input id="date" type="date" className="input" onBlur={v.blur('drive_date')} value={form.drive_date ?? ''} onChange={(e) => set('drive_date', e.target.value)} /></Field>
           <div className="sm:col-span-2">
             <Field label="Eligible departments" htmlFor="depts" hint="Comma-separated, e.g. CSE, IT. Leave blank for all departments.">
               <input id="depts" className="input" value={depts} onChange={(e) => setDepts(e.target.value)} />

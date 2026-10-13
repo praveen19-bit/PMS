@@ -85,8 +85,8 @@ const realApi = {
   myApplications: () => request<Application[]>('/applications/me'),
   applications: (opts: { batch_id?: string; drive_id?: string; stage?: string } = {}) =>
     request<Application[]>(`/applications${qs(opts)}`),
-  logStage: (id: string, stage: string, remarks?: string) =>
-    request<Application>(`/applications/${id}/stages`, { method: 'POST', body: json({ stage, remarks }) }),
+  logStage: (id: string, stage: string, remarks?: string, rating?: number | null) =>
+    request<Application>(`/applications/${id}/stages`, { method: 'POST', body: json({ stage, remarks, rating: rating ?? null }) }),
 
   // users
   users: (role?: Role) => request<UserRow[]>(`/users${qs({ role })}`),

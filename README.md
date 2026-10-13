@@ -61,7 +61,7 @@ The schema follows the spec, plus a few additions:
 
 ### 1. Supabase
 1. Create a project at supabase.com. To run Supabase locally instead, use `supabase start`.
-2. In the SQL editor, run the files in `supabase/migrations/` in order: `0001`, `0002`, `0003`.
+2. In the SQL editor, run the files in `supabase/migrations/` in order: `0001`, `0002`, `0003`, `0004`. If you already ran the first three, just run `0004` (review ratings, staff names readable by students, daily trend views).
 3. Under **Authentication → Providers → Email**, turn off public sign-ups. Accounts are created by the admin.
 4. Create your first user under **Authentication → Users → Add user** with auto-confirm on. Put that email into `supabase/seed.sql` and run it to make the user an admin.
 

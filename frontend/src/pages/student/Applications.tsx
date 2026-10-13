@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { ListChecks } from 'lucide-react'
@@ -10,11 +10,13 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { EmptyState, ErrorState, ListSkeleton } from '@/components/ui/States'
 import { ApplicationTimeline } from '@/components/ApplicationTimeline'
+import { ReviewCard, reviewsOf } from '@/components/ReviewCard'
 import { Link } from 'react-router-dom'
 
 export default function StudentApplications() {
   const apps = useQuery({ queryKey: ['my-applications'], queryFn: api.myApplications })
   const { hash } = useLocation()
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     if (hash && apps.data) document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -37,7 +39,7 @@ export default function StudentApplications() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {apps.data.map((a) => (
-            <Card key={a.id} id={a.id} className="scroll-mt-24 p-5">
+            <Card key={a.id} id={a.id} className="scroll-mt-24 p-6">
               <div className="mb-4 flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <h3 className="truncate font-medium">{a.drive?.company_name ?? 'Drive'}</h3>
@@ -49,7 +51,25 @@ export default function StudentApplications() {
                 </div>
                 <Badge tone={stageTone(a.current_stage)}>{stageLabel(a.current_stage)}</Badge>
               </div>
-              <ApplicationTimeline app={a} />
+              <ApplicationTimeline app={a} showRemarks={false} />
+              {(() => {
+                const reviews = reviewsOf(a.history)
+                if (!reviews.length) return null
+                const shown = expanded[a.id] ? reviews : reviews.slice(0, 1)
+                return (
+                  <section className="mt-6 border-t border-line pt-4" aria-label="Faculty feedback">
+                    <div className="mb-3 flex items-center justify-between">
+                      <h4 className="text-sm font-semibold">Faculty feedback</h4>
+                      {reviews.length > 1 && (
+                        <button className="text-xs font-medium text-brand-600" onClick={() => setExpanded((e) => ({ ...e, [a.id]: !e[a.id] }))}>
+                          {expanded[a.id] ? 'Show latest only' : `Show all ${reviews.length}`}
+                        </button>
+                      )}
+                    </div>
+                    <div className="space-y-3">{shown.map((r) => <ReviewCard key={r.id} entry={r} />)}</div>
+                  </section>
+                )
+              })()}
             </Card>
           ))}
         </div>

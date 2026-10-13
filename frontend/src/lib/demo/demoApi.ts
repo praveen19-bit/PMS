@@ -67,7 +67,10 @@ function toApplication(a: DApplication): Application {
     student_name: d.profiles.find((p) => p.id === a.student_id)?.full_name ?? null,
     roll_no: sp?.roll_no ?? null,
     batch_id: sp?.batch_id ?? null,
-    history: d.logs.filter((l) => l.application_id === a.id).sort((x, y) => (x.updated_at ?? '').localeCompare(y.updated_at ?? '')),
+    history: d.logs
+      .filter((l) => l.application_id === a.id)
+      .sort((x, y) => (x.updated_at ?? '').localeCompare(y.updated_at ?? ''))
+      .map((l) => ({ ...l, updater_name: d.profiles.find((p) => p.id === l.updated_by)?.full_name ?? null })),
   }
 }
 
@@ -87,6 +90,30 @@ function userRow(id: string): UserRow {
 function validateStudent(s: StudentDetails, userId?: string) {
   if (!s.roll_no.trim() || !s.department.trim()) fail(422, 'Roll number and department are required')
   if (db().student_profiles.some((x) => x.roll_no === s.roll_no && x.user_id !== userId)) fail(409, 'Roll number already in use')
+}
+
+/** Last 7 days vs the previous 7 (same rules as the backend's daily_* views). */
+function weeklyTrends() {
+  const d = db()
+  const today = todayISO()
+  const age = (iso: string) => Math.round((new Date(`${today}T00:00:00`).getTime() - new Date(`${iso.slice(0, 10)}T00:00:00`).getTime()) / 86_400_000)
+  const split = <T,>(rows: T[], day: (r: T) => string, value: (r: T) => number) => {
+    let current = 0, previous = 0
+    for (const r of rows) {
+      const a = age(day(r))
+      if (a >= 0 && a < 7) current += value(r)
+      else if (a >= 7 && a < 14) previous += value(r)
+    }
+    return { current, previous }
+  }
+  const present = split(d.attendance, (r) => r.date, (r) => (r.status === 'present' ? 1 : 0))
+  const total = split(d.attendance, (r) => r.date, () => 1)
+  const pct = (p: number, t: number) => (t ? Math.round((1000 * p) / t) / 10 : 0)
+  return {
+    attendance_pct: { current: pct(present.current, total.current), previous: pct(present.previous, total.previous) },
+    applications: split(d.applications, (a) => a.applied_at, () => 1),
+    offers: split(d.logs.filter((l) => l.stage === 'offered'), (l) => l.updated_at ?? '', () => 1),
+  }
 }
 
 export const demoApi = {
@@ -284,14 +311,15 @@ export const demoApi = {
       .sort((a, b) => b.applied_at.localeCompare(a.applied_at))
       .map(toApplication)
   }),
-  logStage: (id: string, stage: string, remarks?: string) => respond<Application>(() => {
+  logStage: (id: string, stage: string, remarks?: string, rating?: number | null) => respond<Application>(() => {
     const u = caller('faculty', 'dean', 'admin')
     if (!STAGES.includes(stage)) fail(422, 'Unknown stage')
     return mutate((d) => {
       const app = d.applications.find((a) => a.id === id)
       if (!app || !visibleStudentIds(u).has(app.student_id)) fail(404, 'Application not found')
       if (u.role === 'faculty' && CLOSED.includes(app!.current_stage)) fail(409, `Application is closed (${app!.current_stage}); ask the dean to reopen`)
-      d.logs.push({ id: uid('log'), application_id: id, updated_by: u.id, stage, remarks: remarks ?? null, updated_at: new Date().toISOString() })
+      if (rating != null && (rating < 1 || rating > 5)) fail(422, 'Rating must be between 1 and 5')
+      d.logs.push({ id: uid('log'), application_id: id, updated_by: u.id, stage, remarks: remarks ?? null, rating: rating ?? null, updated_at: new Date().toISOString() })
       app!.current_stage = stage
       return toApplication(app!)
     })
@@ -380,6 +408,7 @@ export const demoApi = {
         offers: byStage.get('offered') ?? 0,
       },
       batch_attendance,
+      trends: weeklyTrends(),
       funnel,
       stage_counts: STAGES.map((stage) => ({ stage, count: byStage.get(stage) ?? 0 })),
     }

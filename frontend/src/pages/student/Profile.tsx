@@ -59,15 +59,15 @@ export default function StudentProfile() {
         <div className="space-y-4 lg:col-span-7">
           <Card>
             <CardHeader title="my numbers" />
-            <dl className="grid grid-cols-3 gap-3 p-5">
+            <dl className="grid grid-cols-3 gap-3 p-6">
               <div><dt className="text-[11px] text-ink-mute">applied</dt><dd className="num text-3xl text-brand-600">{apps.data?.length ?? '–'}</dd></div>
               <div><dt className="text-[11px] text-ink-mute">offers</dt><dd className="num text-3xl text-success">{offers}</dd></div>
               <div><dt className="text-[11px] text-ink-mute">attendance</dt><dd className={`num text-3xl ${pct >= 75 ? 'text-success' : 'text-warning'}`}>{att.data ? `${Math.round(pct)}%` : '–'}</dd></div>
             </dl>
-            <div className="px-5 pb-5"><Progress value={pct} label="attendance target 75%" /></div>
+            <div className="px-6 pb-6"><Progress value={pct} label="attendance target 75%" /></div>
           </Card>
           {!me.student && (
-            <Card className="p-5 text-sm text-ink-soft">
+            <Card className="p-6 text-sm text-ink-soft">
               Your student details haven't been set up yet. Contact the placement cell to be added to a batch.
             </Card>
           )}

@@ -75,8 +75,8 @@ export function AppShell() {
           collapsed ? 'w-[104px]' : 'w-[272px]',
         )}
       >
-        <div className="glass sheen flex h-full flex-col rounded-3xl py-5">
-          <div className={cn('flex items-center px-5', collapsed && 'justify-center px-0')}>
+        <div className="glass sheen flex h-full flex-col rounded-2xl py-5">
+          <div className={cn('flex items-center px-6', collapsed && 'justify-center px-0')}>
             {collapsed ? <LogoMark /> : <Logo />}
           </div>
 

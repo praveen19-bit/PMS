@@ -10,7 +10,7 @@ _SELECT = (
     "*,"
     "drive:company_drives(id,company_name,role_offered,ctc,drive_date),"
     "student:profiles(full_name,sp:student_profiles(roll_no,batch_id)),"
-    "history:interview_status_log(*)"
+    "history:interview_status_log(*,updater:profiles(full_name))"
 )
 
 
@@ -23,7 +23,10 @@ def _to_application(row: dict) -> Application:
         student_name=student.get("full_name"),
         roll_no=sp.get("roll_no"),
         batch_id=sp.get("batch_id"),
-        history=[StatusLogEntry(**h) for h in history],
+        history=[
+            StatusLogEntry(**h, updater_name=(h.get("updater") or {}).get("full_name"))
+            for h in history
+        ],
     )
 
 
@@ -99,6 +102,7 @@ async def log_stage(
             "updated_by": user.id,
             "stage": body.stage,
             "remarks": body.remarks,
+            "rating": body.rating,
         },
     )
     row = await user.db.select_one("drive_applications", {"id": f"eq.{application_id}", "select": _SELECT})

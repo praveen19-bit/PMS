@@ -30,7 +30,7 @@ export interface DemoDB {
 }
 
 const KEY = 'fastrack-demo-db'
-const VERSION = 1
+const VERSION = 2 // bump to reseed browsers holding older sample data
 export const DEMO_PASSWORD = 'demo1234'
 
 let memory: DemoDB | null = null
@@ -57,6 +57,18 @@ function mulberry32(seed: number) {
 }
 
 const PIPELINE = ['shortlisted', 'aptitude_cleared', 'round1_completed', 'round2_completed', 'hr_round', 'offered']
+
+// Sample faculty feedback per stage (two variants each).
+const REMARKS: Record<string, [string, string]> = {
+  shortlisted: ['Resume shortlisted — strong project section.', 'Shortlisted on academics and internship.'],
+  aptitude_cleared: ['Cleared aptitude comfortably; quant was strong.', 'Aptitude cleared. Work on speed for verbal.'],
+  round1_completed: ['Strong DSA round. Explained the approach clearly.', 'Good problem solving; revise graphs before round 2.'],
+  round2_completed: ['Solid system design basics and clear communication.', 'Handled follow-ups well; be more concise.'],
+  hr_round: ['Confident and well prepared for HR.', 'Good HR conversation; clarify relocation preferences.'],
+  offered: ['Offer letter shared by email. Congratulations!', 'Offer confirmed — great effort through every round.'],
+  rejected: ['Not selected this time. Practise timed coding and reapply.', 'Close call — focus on edge cases in coding rounds.'],
+  withdrawn: ['Withdrew from the process.', 'Withdrew after accepting another offer.'],
+}
 
 function seed(): DemoDB {
   const rnd = mulberry32(2026)
@@ -143,7 +155,8 @@ function seed(): DemoDB {
     path.forEach((stage, i) => {
       db.logs.push({
         id: uid('log'), application_id: app.id, updated_by: 'u-fac1', stage,
-        remarks: stage === 'offered' ? 'Offer letter shared by email.' : stage === 'round1_completed' && rnd() > 0.5 ? 'Strong DSA round.' : null,
+        remarks: REMARKS[stage]?.[Math.floor(rnd() * 2)] ?? null,
+        rating: stage === 'rejected' || stage === 'withdrawn' ? 2 + Math.floor(rnd() * 2) : 3 + Math.floor(rnd() * 3),
         updated_at: stamp(addDays(today, Math.min(-1, appliedOffset + step * (i + 1))), 11 + i),
       })
       app.current_stage = stage

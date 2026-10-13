@@ -17,6 +17,7 @@ export default {
         subtle: v('subtle'),
         line: v('line'),
         ink: { DEFAULT: v('ink'), soft: v('ink-soft'), mute: v('ink-mute') },
+        accent: v('accent'),
         success: v('success'),
         warning: v('warning'),
         danger: v('danger'),
