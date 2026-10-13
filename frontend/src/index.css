@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-tap-highlight-color: transparent; }
+  body { @apply bg-canvas font-sans text-ink antialiased; }
+  :focus-visible { @apply outline-none ring-2 ring-brand-400 ring-offset-2 ring-offset-canvas; }
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-mute
+           shadow-card transition focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-100
+           disabled:cursor-not-allowed disabled:bg-slate-50;
+  }
+  .label { @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-soft; }
+  .text-accent-gradient { @apply bg-accent-gradient bg-clip-text text-transparent; }
+  .blob { @apply pointer-events-none absolute rounded-full blur-3xl; }
+  .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem); }
+}
