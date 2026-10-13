@@ -4,7 +4,7 @@ import { Button } from './Button'
 import { cn } from './cn'
 
 export function Spinner({ className }: { className?: string }) {
-  return <Loader2 className={cn('h-5 w-5 animate-spin text-ink', className)} />
+  return <Loader2 className={cn('h-5 w-5 animate-spin text-brand-500', className)} />
 }
 
 export function FullPageSpinner() {
@@ -16,26 +16,24 @@ export function FullPageSpinner() {
 }
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded-3xl bg-white/50', className)} />
+  return <div className={cn('animate-pulse rounded-3xl bg-white/60', className)} />
 }
 
 export function ListSkeleton({ rows = 3 }: { rows?: number }) {
   return (
     <div className="space-y-3">
-      {Array.from({ length: rows }).map((_, i) => (
-        <Skeleton key={i} className="h-24 w-full rounded-4xl" />
-      ))}
+      {Array.from({ length: rows }).map((_, i) => <Skeleton key={i} className="h-24 w-full" />)}
     </div>
   )
 }
 
 export function EmptyState({ icon, title, message, action }: { icon?: ReactNode; title: string; message?: string; action?: ReactNode }) {
   return (
-    <div className="glass flex flex-col items-center rounded-4xl px-6 py-12 text-center">
-      <span className="grid h-12 w-12 place-items-center rounded-full bg-lime text-lime-ink">
+    <div className="glass flex flex-col items-center rounded-3xl px-6 py-12 text-center">
+      <span className="bg-grad grid h-12 w-12 place-items-center rounded-2xl text-white shadow-glow">
         {icon ?? <Inbox className="h-5 w-5" />}
       </span>
-      <h3 className="mt-4 text-lg font-normal tracking-tight">{title}</h3>
+      <h3 className="mt-4 font-semibold">{title}</h3>
       {message && <p className="mt-1 max-w-sm text-sm text-ink-mute">{message}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>
@@ -44,15 +42,11 @@ export function EmptyState({ icon, title, message, action }: { icon?: ReactNode;
 
 export function ErrorState({ title = 'Something went wrong', message, action }: { title?: string; message?: string; action?: { label: string; onClick: () => void } }) {
   return (
-    <div className="glass flex flex-col items-center rounded-4xl px-6 py-10 text-center">
-      <span className="grid h-12 w-12 place-items-center rounded-full bg-rose-100 text-rose-600"><AlertTriangle className="h-5 w-5" /></span>
-      <h3 className="mt-3 text-lg font-normal tracking-tight">{title}</h3>
+    <div className="glass flex flex-col items-center rounded-3xl px-6 py-10 text-center">
+      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-coral-soft text-coral"><AlertTriangle className="h-5 w-5" /></span>
+      <h3 className="mt-3 font-semibold">{title}</h3>
       {message && <p className="mt-1 max-w-sm text-sm text-ink-soft">{message}</p>}
-      {action && (
-        <Button variant="secondary" size="sm" className="mt-4" onClick={action.onClick}>
-          {action.label}
-        </Button>
-      )}
+      {action && <Button variant="secondary" size="sm" className="mt-4" onClick={action.onClick}>{action.label}</Button>}
     </div>
   )
 }

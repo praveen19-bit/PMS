@@ -3,11 +3,11 @@ import { cn } from './cn'
 import type { Tone } from '@/lib/format'
 
 const tones: Record<Tone, string> = {
-  brand: 'bg-ink text-white',
-  success: 'bg-lime text-lime-ink',
-  danger: 'bg-rose-100/90 text-rose-700',
-  warning: 'bg-amber-100/90 text-amber-800',
-  neutral: 'bg-white/80 text-ink-soft ring-1 ring-inset ring-line',
+  brand: 'bg-brand-100 text-brand-700',
+  success: 'bg-grad text-white',
+  danger: 'bg-coral-soft text-coral',
+  warning: 'bg-amber-soft text-[#B9770A]',
+  neutral: 'bg-[#F1F0F8] text-ink-soft',
 }
 
 export function Badge({ tone = 'neutral', children, className }: { tone?: Tone; children: ReactNode; className?: string }) {

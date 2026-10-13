@@ -21,7 +21,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <div className="pointer-events-none fixed inset-x-0 top-4 z-[60] flex flex-col items-center gap-2 px-4" aria-live="polite">
         {items.map((t) => (
           <div key={t.id} className="glass-strong pointer-events-auto flex max-w-md animate-fade-up items-center gap-2.5 rounded-full py-2 pl-2 pr-4 text-sm font-medium">
-            <span className={cn('grid h-6 w-6 shrink-0 place-items-center rounded-full', t.kind === 'success' ? 'bg-lime text-lime-ink' : 'bg-rose-500 text-white')}>
+            <span className={cn('grid h-6 w-6 shrink-0 place-items-center rounded-full text-white', t.kind === 'success' ? 'bg-grad' : 'bg-coral')}>
               {t.kind === 'success' ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <X className="h-3.5 w-3.5" strokeWidth={3} />}
             </span>
             {t.message}

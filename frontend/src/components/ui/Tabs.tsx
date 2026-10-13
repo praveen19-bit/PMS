@@ -1,6 +1,6 @@
 import { cn } from './cn'
 
-/** Segmented pill control; the active segment is solid black. */
+/** Segmented pill control; the active segment uses the violet gradient. */
 export function Tabs<T extends string>({ value, onChange, items }: { value: T; onChange: (v: T) => void; items: { value: T; label: string; count?: number }[] }) {
   return (
     <div className="-mx-4 overflow-x-auto px-4 py-1 scrollbar-none sm:mx-0 sm:px-0" role="tablist">
@@ -13,11 +13,11 @@ export function Tabs<T extends string>({ value, onChange, items }: { value: T; o
             onClick={() => onChange(it.value)}
             className={cn(
               'whitespace-nowrap rounded-full px-4 py-1.5 text-[13px] font-medium transition',
-              value === it.value ? 'bg-ink text-white shadow-glow' : 'text-ink-soft hover:bg-white/70 hover:text-ink',
+              value === it.value ? 'bg-grad text-white shadow-glow' : 'text-ink-soft hover:text-brand-600',
             )}
           >
             {it.label}
-            {it.count !== undefined && <span className={cn('ml-1.5 tabular-nums', value === it.value ? 'text-lime' : 'text-ink-mute')}>{it.count}</span>}
+            {it.count !== undefined && <span className={cn('ml-1.5 tabular-nums', value === it.value ? 'text-white/80' : 'text-ink-mute')}>{it.count}</span>}
           </button>
         ))}
       </div>

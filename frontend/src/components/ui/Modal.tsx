@@ -1,7 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
-import { IconButton } from './Button'
 
 interface Props {
   open: boolean
@@ -32,21 +31,23 @@ export function Modal({ open, onClose, title, description, children, footer }: P
   if (!open) return null
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6">
-      <div className="absolute inset-0 bg-ink/25 backdrop-blur-[6px]" onClick={onClose} aria-hidden />
+      <div className="absolute inset-0 bg-[#2B2453]/30 backdrop-blur-[6px]" onClick={onClose} aria-hidden />
       <div
         ref={panel}
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="glass-strong sheen relative flex max-h-[92vh] w-full animate-fade-up flex-col rounded-t-5xl sm:max-w-lg sm:rounded-5xl"
+        className="glass-strong sheen relative flex max-h-[92vh] w-full animate-fade-up flex-col rounded-t-4xl sm:max-w-lg sm:rounded-4xl"
       >
-        <div className="mx-auto mt-2 h-1 w-10 rounded-full bg-ink/15 sm:hidden" aria-hidden />
+        <div className="mx-auto mt-2 h-1 w-10 rounded-full bg-brand-200 sm:hidden" aria-hidden />
         <div className="flex items-start justify-between gap-4 px-6 pb-3 pt-4 sm:pt-6">
           <div>
-            <h2 className="text-xl font-normal tracking-tight">{title}</h2>
+            <h2 className="text-lg font-semibold text-brand-600">{title}</h2>
             {description && <p className="mt-0.5 text-sm text-ink-mute">{description}</p>}
           </div>
-          <IconButton label="Close" size="sm" onClick={onClose}><X className="h-4 w-4" /></IconButton>
+          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-full bg-[#F1F0F8] text-ink-soft hover:bg-brand-50 hover:text-brand-600">
+            <X className="h-4 w-4" />
+          </button>
         </div>
         <div className="overflow-y-auto px-6 py-2">{children}</div>
         {footer && <div className="flex justify-end gap-2 px-6 pb-safe pt-4 sm:pb-6">{footer}</div>}

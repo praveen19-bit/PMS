@@ -83,7 +83,7 @@ export default function DeanDrives() {
                 {drives.data.map((d) => {
                   const past = (daysUntil(d.drive_date) ?? 0) < 0
                   return (
-                    <tr key={d.id} className="hover:bg-white/50">
+                    <tr key={d.id} className="hover:bg-brand-50/60">
                       <td className="px-5 py-3"><p className="font-medium">{d.company_name}</p><p className="text-xs text-ink-mute">{d.role_offered}</p></td>
                       <td className="font-medium text-brand-700">{d.ctc || '—'}</td>
                       <td><span className="flex items-center gap-2">{fmtDate(d.drive_date)}{past && <Badge>Past</Badge>}</span></td>
@@ -91,7 +91,7 @@ export default function DeanDrives() {
                       <td><span className="inline-flex items-center gap-1 font-medium"><Users className="h-3.5 w-3.5 text-ink-mute" />{d.application_count ?? 0}</span></td>
                       <td className="pr-4 text-right">
                         <Button variant="ghost" size="sm" onClick={() => startEdit(d)} aria-label={`Edit ${d.company_name}`}><Pencil className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="sm" onClick={() => setToDelete(d)} aria-label={`Delete ${d.company_name}`}><Trash2 className="h-4 w-4 text-rose-500" /></Button>
+                        <Button variant="ghost" size="sm" onClick={() => setToDelete(d)} aria-label={`Delete ${d.company_name}`}><Trash2 className="h-4 w-4 text-coral" /></Button>
                       </td>
                     </tr>
                   )
@@ -107,7 +107,7 @@ export default function DeanDrives() {
                   <p className="truncate text-xs text-ink-mute">{d.role_offered} · {fmtDate(d.drive_date)} · {d.application_count ?? 0} applied</p>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => startEdit(d)} aria-label="Edit"><Pencil className="h-4 w-4" /></Button>
-                <Button variant="ghost" size="sm" onClick={() => setToDelete(d)} aria-label="Delete"><Trash2 className="h-4 w-4 text-rose-500" /></Button>
+                <Button variant="ghost" size="sm" onClick={() => setToDelete(d)} aria-label="Delete"><Trash2 className="h-4 w-4 text-coral" /></Button>
               </li>
             ))}
           </ul>

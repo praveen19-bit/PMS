@@ -6,56 +6,53 @@
   html { -webkit-tap-highlight-color: transparent; }
   body {
     @apply bg-canvas font-sans text-ink antialiased;
-    /* Soft light pools behind the glass so the blur has something to refract. */
+    /* Soft violet and pink pools behind the glass so the blur reads. */
     background-image:
-      radial-gradient(60rem 40rem at 8% -10%, rgba(255,255,255,0.95), transparent 60%),
-      radial-gradient(40rem 30rem at 100% 0%, rgba(212,242,92,0.20), transparent 60%),
-      radial-gradient(50rem 40rem at 60% 110%, rgba(255,255,255,0.8), transparent 60%);
+      radial-gradient(42rem 32rem at 0% 0%, rgba(157,123,255,0.22), transparent 60%),
+      radial-gradient(36rem 28rem at 100% 10%, rgba(238,93,166,0.12), transparent 60%),
+      radial-gradient(48rem 36rem at 50% 110%, rgba(127,86,245,0.14), transparent 60%);
     background-attachment: fixed;
   }
-  :focus-visible { @apply outline-none ring-2 ring-ink/70 ring-offset-2 ring-offset-canvas; }
-  h1, h2, h3 { @apply font-display; }
+  :focus-visible { @apply outline-none ring-2 ring-brand-400 ring-offset-2 ring-offset-canvas; }
 }
 
 @layer components {
-  /* Liquid glass: translucent fill, heavy blur + saturation, bright rim, soft depth. */
+  /* Violet gradient used for primary actions and highlights. */
+  .bg-grad { background-image: linear-gradient(135deg, #9D7BFF 0%, #6A3DE8 100%); }
+  .text-grad { @apply bg-clip-text text-transparent; background-image: linear-gradient(135deg, #9D7BFF 0%, #6A3DE8 100%); }
+
+  /* Liquid glass: translucent white, blur + saturation, bright rim, soft violet depth. */
   .glass {
-    background: linear-gradient(160deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.52) 100%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    backdrop-filter: blur(24px) saturate(180%);
-    border: 1px solid rgba(255,255,255,0.75);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.95),
-      inset 0 -1px 0 rgba(17,18,20,0.03),
-      0 1px 2px rgba(16,18,24,0.04),
-      0 14px 34px -16px rgba(16,18,24,0.16);
-  }
-  .glass-strong {
-    background: linear-gradient(160deg, rgba(255,255,255,0.86) 0%, rgba(246,247,249,0.66) 100%);
-    -webkit-backdrop-filter: blur(30px) saturate(200%);
-    backdrop-filter: blur(30px) saturate(200%);
+    background: linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.62) 100%);
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
+    backdrop-filter: blur(22px) saturate(170%);
     border: 1px solid rgba(255,255,255,0.85);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,1),
-      inset 0 0 0 0.5px rgba(255,255,255,0.6),
-      0 20px 50px -20px rgba(16,18,24,0.30);
+      0 1px 2px rgba(60,40,140,0.04),
+      0 14px 34px -16px rgba(60,40,140,0.20);
   }
-  /* Specular sheen across the top edge — add to a positioned glass element. */
+  .glass-strong {
+    background: linear-gradient(160deg, rgba(255,255,255,0.92) 0%, rgba(250,249,255,0.78) 100%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    backdrop-filter: blur(28px) saturate(190%);
+    border: 1px solid rgba(255,255,255,0.9);
+    box-shadow: inset 0 1px 0 #fff, 0 22px 50px -20px rgba(60,40,140,0.32);
+  }
+  /* Specular highlight along the top edge of a glass surface. */
   .sheen { position: relative; isolation: isolate; }
   .sheen::before {
     content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1;
-    background:
-      radial-gradient(120% 60% at 15% 0%, rgba(255,255,255,0.75), transparent 55%),
-      linear-gradient(180deg, rgba(255,255,255,0.35), transparent 35%);
+    background: radial-gradient(120% 60% at 10% 0%, rgba(255,255,255,0.8), transparent 55%);
   }
   .input {
-    @apply w-full rounded-2xl border border-white/80 bg-white/70 px-4 py-3 text-sm text-ink placeholder:text-ink-mute
-           shadow-[inset_0_1px_2px_rgba(17,18,20,0.05)] backdrop-blur transition
-           focus:border-ink/20 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-300/40
+    @apply w-full rounded-full border border-transparent bg-[#F1F0F8]/90 px-5 py-3 text-sm text-ink placeholder:text-ink-mute
+           transition focus:border-brand-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-100
            disabled:cursor-not-allowed disabled:opacity-60;
   }
-  .label { @apply mb-1.5 block text-xs font-medium text-ink-soft; }
-  .num { @apply font-display font-light tracking-tight tabular-nums; }
+  textarea.input { @apply rounded-3xl; }
+  .label { @apply mb-1.5 ml-1 block text-xs text-ink-soft; }
+  .num { @apply font-semibold tracking-tight tabular-nums; }
   .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem); }
   .scrollbar-none { scrollbar-width: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }

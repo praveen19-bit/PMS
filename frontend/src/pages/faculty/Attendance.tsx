@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CalendarDays, CheckCheck, Layers, RotateCcw, Save } from 'lucide-react'
+import { CheckCheck, Layers, RotateCcw, Save } from 'lucide-react'
 import { api } from '@/lib/api'
 import type { AttendanceStatus } from '@/lib/types'
 import { fmtDate, todayISO } from '@/lib/format'
@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
 import { EmptyState, ErrorState, ListSkeleton } from '@/components/ui/States'
 import { AttendanceGrid } from '@/components/AttendanceGrid'
+import { WeekStrip } from '@/components/WeekStrip'
 
 export default function FacultyAttendance() {
   const { batches, selected, setSelected } = useBatchSelection()
@@ -85,19 +86,18 @@ export default function FacultyAttendance() {
 
       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <Tabs value={selected} onChange={(v) => setSelected(v)} items={batches.data.map((b) => ({ value: b.id, label: b.name }))} />
-        <label className="relative md:w-48">
-          <span className="sr-only">Date</span>
-          <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-mute" />
-          <input type="date" className="input pl-10" value={date} max={todayISO()} onChange={(e) => e.target.value && setDate(e.target.value)} />
-        </label>
       </div>
+
+      <Card className="mb-4 p-4">
+        <WeekStrip value={date} onChange={setDate} max={todayISO()} />
+      </Card>
 
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
           <div className="flex flex-wrap gap-3 text-xs font-medium">
-            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-lime" />{tally.present} present</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-ink" />{tally.absent} absent</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-white bg-hatch ring-1 ring-ink/15" />{tally.leave} leave</span>
+            <span className="inline-flex items-center gap-1.5"><span className="bg-grad h-2.5 w-2.5 rounded-full" />{tally.present} present</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-coral" />{tally.absent} absent</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-amber" />{tally.leave} leave</span>
             {tally.unmarked > 0 && <span className="text-ink-mute">{tally.unmarked} unmarked</span>}
           </div>
           <div className="flex gap-2">

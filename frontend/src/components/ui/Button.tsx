@@ -2,7 +2,7 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
 import { Loader2 } from 'lucide-react'
 import { cn } from './cn'
 
-type Variant = 'primary' | 'secondary' | 'accent' | 'ghost' | 'danger'
+type Variant = 'primary' | 'secondary' | 'soft' | 'ghost' | 'danger'
 type Size = 'sm' | 'md' | 'lg'
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -14,16 +14,16 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-ink text-white shadow-glow hover:bg-black active:scale-[0.98]',
-  secondary: 'glass text-ink hover:bg-white/90 active:scale-[0.98]',
-  accent: 'bg-lime text-lime-ink shadow-[0_8px_22px_-10px_rgba(150,190,20,0.9)] hover:brightness-105 active:scale-[0.98]',
-  ghost: 'text-ink-soft hover:bg-white/70 hover:text-ink',
-  danger: 'glass text-rose-600 hover:bg-rose-50/80',
+  primary: 'bg-grad text-white shadow-glow hover:brightness-110 active:brightness-95',
+  secondary: 'bg-white text-brand-600 ring-1 ring-inset ring-brand-200 hover:bg-brand-50',
+  soft: 'bg-[#F1F0F8] text-ink-soft hover:bg-brand-50 hover:text-brand-700',
+  ghost: 'text-ink-soft hover:bg-brand-50 hover:text-brand-700',
+  danger: 'bg-white text-coral ring-1 ring-inset ring-coral/30 hover:bg-coral-soft',
 }
 const sizes: Record<Size, string> = {
-  sm: 'h-8 px-3.5 text-xs gap-1.5',
-  md: 'h-10 px-4 text-sm gap-2',
-  lg: 'h-12 px-6 text-[15px] gap-2',
+  sm: 'h-8 px-4 text-xs gap-1.5',
+  md: 'h-10 px-5 text-sm gap-2',
+  lg: 'h-12 px-7 text-[15px] gap-2',
 }
 
 export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
@@ -35,8 +35,8 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
       ref={ref}
       disabled={disabled || loading}
       className={cn(
-        'inline-flex select-none items-center justify-center whitespace-nowrap rounded-full font-medium transition',
-        'disabled:pointer-events-none disabled:opacity-45 disabled:shadow-none',
+        'inline-flex select-none items-center justify-center whitespace-nowrap rounded-full font-medium transition active:scale-[0.98]',
+        'disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none',
         variants[variant],
         sizes[size],
         block && 'w-full',
@@ -56,7 +56,7 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'sm' | 'md' | 'lg'
 }
 
-/** Round glass icon button; `active` renders it solid black like a selected tool. */
+/** Round icon button; `active` fills it with the violet gradient. */
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
   { label, active, size = 'md', className, children, ...rest },
   ref,
@@ -69,7 +69,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
       className={cn(
         'grid shrink-0 place-items-center rounded-full transition active:scale-95 disabled:pointer-events-none disabled:opacity-40',
         size === 'sm' ? 'h-8 w-8' : size === 'lg' ? 'h-12 w-12' : 'h-10 w-10',
-        active ? 'bg-ink text-white shadow-glow' : 'glass text-ink hover:bg-white',
+        active ? 'bg-grad text-white shadow-glow' : 'bg-white text-brand-600 shadow-sm ring-1 ring-line hover:bg-brand-50',
         className,
       )}
       {...rest}

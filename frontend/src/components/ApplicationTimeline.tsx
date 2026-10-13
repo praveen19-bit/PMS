@@ -37,23 +37,25 @@ export function ApplicationTimeline({ app }: { app: Application }) {
         const isLast = i === steps.length - 1
         return (
           <li key={s.key} className="relative flex gap-3 pb-5 last:pb-0">
-            {!isLast && <span className={cn('absolute left-[11px] top-7 h-[calc(100%-1.5rem)] w-px', s.state === 'upcoming' ? 'bg-line' : 'bg-ink/20')} aria-hidden />}
+            {!isLast && <span className={cn('absolute left-[11px] top-7 h-[calc(100%-1.5rem)] w-0.5 rounded-full', s.state === 'upcoming' ? 'bg-line' : 'bg-brand-200')} aria-hidden />}
             <span
               className={cn(
                 'relative z-10 grid h-6 w-6 shrink-0 place-items-center rounded-full',
-                s.state === 'offer' && 'bg-lime text-lime-ink',
-                s.state === 'failed' && 'bg-rose-500 text-white',
-                s.state === 'current' && 'bg-ink text-lime ring-4 ring-lime/40',
-                s.state === 'done' && 'bg-ink text-white',
-                s.state === 'upcoming' && 'border border-dashed border-ink/25 bg-white/60',
+                (s.state === 'offer' || s.state === 'done') && 'bg-grad text-white',
+                s.state === 'failed' && 'bg-coral text-white',
+                s.state === 'current' && 'bg-white ring-2 ring-brand-500',
+                s.state === 'upcoming' && 'border-2 border-dashed border-brand-200 bg-white',
               )}
             >
-              {s.state === 'failed' ? <X className="h-3 w-3" strokeWidth={3} /> : s.state !== 'upcoming' && s.state !== 'current' ? <Check className="h-3 w-3" strokeWidth={3} /> : s.state === 'current' ? <span className="h-1.5 w-1.5 rounded-full bg-lime" /> : null}
+              {s.state === 'failed' ? <X className="h-3 w-3" strokeWidth={3} />
+                : s.state === 'current' ? <span className="bg-grad h-2.5 w-2.5 rounded-full" />
+                : s.state !== 'upcoming' ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
             </span>
             <div className="min-w-0 pt-0.5">
-              <p className={cn('text-sm font-medium', s.state === 'upcoming' && 'font-normal text-ink-mute', s.state === 'failed' && 'text-rose-600')}>{s.label}</p>
+              <p className={cn('text-sm font-medium', s.state === 'upcoming' && 'font-normal text-ink-mute', s.state === 'failed' && 'text-coral', s.state === 'offer' && 'text-brand-600')}>{s.label}</p>
               {s.at && <p className="text-[11px] text-ink-mute">{fmtDate(s.at, { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}</p>}
-              {s.remarks && <p className="mt-1.5 rounded-2xl bg-white/70 px-3 py-2 text-xs text-ink-soft">{s.remarks}</p>}
+              {/* Remarks styled as a chat bubble, like the kit's message card. */}
+              {s.remarks && <p className="mt-1.5 inline-block rounded-2xl rounded-tl-md bg-[#F1F0F8] px-3 py-2 text-xs text-ink-soft">{s.remarks}</p>}
             </div>
           </li>
         )

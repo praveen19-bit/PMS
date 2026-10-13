@@ -4,33 +4,32 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        display: ['"Inter Tight"', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Rubik', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['Rubik', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // Lime accent scale (#D4F25C is the signature highlight).
+        // Violet primary (gradient runs 400 → 600).
         brand: {
-          50: '#F8FCE8', 100: '#EFF9C9', 200: '#E3F49C', 300: '#D4F25C', 400: '#C3E440',
-          500: '#A5C626', 600: '#6F880F', 700: '#506308', 800: '#3A4806', 900: '#283204',
+          50: '#F5F2FF', 100: '#ECE6FF', 200: '#DACEFF', 300: '#BFA9FF', 400: '#9D7BFF',
+          500: '#7F56F5', 600: '#6A3DE8', 700: '#5A2FCC', 800: '#4825A3', 900: '#3A1F82',
         },
-        lime: { DEFAULT: '#D4F25C', soft: '#EAF9B4', ink: '#2F3A05' },
-        canvas: '#E9EAED',
-        line: 'rgb(17 18 20 / 0.08)',
-        ink: { DEFAULT: '#111214', soft: '#55585F', mute: '#8D9097' },
+        // Secondary stat colours from the kit.
+        pink: { DEFAULT: '#EE5DA6', soft: '#FDE7F2' },
+        amber: { DEFAULT: '#F2A51A', soft: '#FFF3DB' },
+        coral: { DEFAULT: '#EF6461', soft: '#FDE8E7' },
+        canvas: '#ECEDF9',
+        line: '#ECEAF6',
+        ink: { DEFAULT: '#24223F', soft: '#5E5B7B', mute: '#9E9CB6' },
       },
-      borderRadius: { '4xl': '1.75rem', '5xl': '2.25rem' },
+      borderRadius: { '4xl': '1.75rem' },
       boxShadow: {
-        card: '0 1px 2px rgba(16,18,24,0.04), 0 10px 30px -14px rgba(16,18,24,0.14)',
-        float: '0 18px 50px -18px rgba(16,18,24,0.35)',
-        glow: '0 8px 24px -10px rgba(17,18,20,0.55)',
-      },
-      backgroundImage: {
-        hatch: 'repeating-linear-gradient(135deg, rgba(17,18,20,0.16) 0 1px, transparent 1px 6px)',
+        card: '0 1px 2px rgba(60,40,140,0.04), 0 12px 32px -14px rgba(60,40,140,0.16)',
+        glow: '0 10px 24px -10px rgba(106,61,232,0.65)',
       },
       keyframes: {
         'fade-up': { from: { opacity: '0', transform: 'translateY(6px)' }, to: { opacity: '1', transform: 'none' } },
       },
-      animation: { 'fade-up': 'fade-up .35s ease-out both' },
+      animation: { 'fade-up': 'fade-up .3s ease-out both' },
     },
   },
   plugins: [],

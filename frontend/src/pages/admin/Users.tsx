@@ -95,7 +95,7 @@ export default function AdminUsers() {
           <ul className="divide-y divide-line">
             {list.map((u) => (
               <li key={u.id} className="flex items-center gap-3 px-4 py-3 sm:px-5">
-                <Avatar name={u.full_name} />
+                <Avatar name={u.full_name} ring className="h-11 w-11" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{u.full_name}{u.id === me?.profile.id && <span className="ml-1 text-xs text-ink-mute">(you)</span>}</p>
                   <p className="truncate text-xs text-ink-mute">
@@ -104,7 +104,7 @@ export default function AdminUsers() {
                 </div>
                 <Badge tone={ROLE_TONE[u.role]} className="capitalize">{u.role}</Badge>
                 <Button variant="ghost" size="sm" onClick={() => startEdit(u)} aria-label={`Edit ${u.full_name}`}><Pencil className="h-4 w-4" /></Button>
-                <Button variant="ghost" size="sm" disabled={u.id === me?.profile.id} onClick={() => setToDelete(u)} aria-label={`Delete ${u.full_name}`}><Trash2 className="h-4 w-4 text-rose-500" /></Button>
+                <Button variant="ghost" size="sm" disabled={u.id === me?.profile.id} onClick={() => setToDelete(u)} aria-label={`Delete ${u.full_name}`}><Trash2 className="h-4 w-4 text-coral" /></Button>
               </li>
             ))}
           </ul>

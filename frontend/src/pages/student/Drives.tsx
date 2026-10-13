@@ -80,7 +80,7 @@ export default function StudentDrives() {
         <p className="text-sm text-ink-soft">
           Your profile will be shared with the placement cell for this drive. Make sure you meet the eligibility criteria:
         </p>
-        <p className="mt-3 whitespace-pre-line rounded-xl bg-white/60 p-3 text-sm">{confirm?.eligibility_criteria || 'No specific criteria listed.'}</p>
+        <p className="mt-3 whitespace-pre-line rounded-2xl bg-[#F6F5FC] p-3 text-sm">{confirm?.eligibility_criteria || 'No specific criteria listed.'}</p>
       </Modal>
     </>
   )

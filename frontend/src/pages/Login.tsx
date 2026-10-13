@@ -1,10 +1,9 @@
 import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
-import { ArrowUpRight, Lock, Mail, ShieldCheck } from 'lucide-react'
+import { CalendarCheck, Eye, EyeOff, LineChart, MessagesSquare } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Logo } from '@/components/ui/Logo'
-import { SphereArt } from '@/components/ui/SphereArt'
-import { ValueChip } from '@/components/ui/Card'
+import { Card } from '@/components/ui/Card'
 import { FullPageSpinner } from '@/components/ui/States'
 import { useAuth } from '@/hooks/useAuth'
 import { HOME_BY_ROLE } from '@/hooks/useRole'
@@ -13,10 +12,29 @@ import { supabaseUrl } from '@/lib/supabaseClient'
 import { DemoRolePicker } from '@/components/DemoRolePicker'
 import { resetDemo } from '@/components/DemoBanner'
 
+/** Decorative curve for the intro panel (no data, purely illustrative). */
+function HeroCurve() {
+  return (
+    <svg viewBox="0 0 400 150" className="h-40 w-full" aria-hidden>
+      <defs>
+        <linearGradient id="hc-fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#9D7BFF" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#9D7BFF" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      {[30, 65, 100, 135].map((y) => <line key={y} x1="0" x2="400" y1={y} y2={y} stroke="#ECEAF6" />)}
+      <path d="M0 120 C40 100 60 70 95 90 S150 120 185 85 S240 20 270 30 S320 95 350 80 S385 70 400 75 V150 H0Z" fill="url(#hc-fill)" />
+      <path d="M0 120 C40 100 60 70 95 90 S150 120 185 85 S240 20 270 30 S320 95 350 80 S385 70 400 75" fill="none" stroke="#7F56F5" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="270" cy="30" r="6" fill="#fff" stroke="#6A3DE8" strokeWidth="3" />
+    </svg>
+  )
+}
+
 export default function Login() {
   const { session, initializing, me, meLoading, signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [show, setShow] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
@@ -40,78 +58,75 @@ export default function Login() {
     }
   }
 
+  const features = [
+    { icon: CalendarCheck, title: 'Daily attendance', text: 'One-tap marking for every batch' },
+    { icon: MessagesSquare, title: 'Interview rounds', text: 'Every stage, with remarks' },
+    { icon: LineChart, title: 'Live analytics', text: 'Attendance and placement funnel' },
+  ]
+
   return (
-    <div className="mx-auto grid min-h-screen max-w-[1480px] gap-4 p-3 sm:p-5 lg:grid-cols-[1.1fr_1fr] lg:gap-6 lg:p-6">
-      {/* Showcase panel */}
-      <section className="glass sheen relative hidden flex-col overflow-hidden rounded-5xl p-10 lg:flex">
-        <div className="flex items-center justify-between">
-          <Logo />
-          <span className="rounded-full bg-white/80 px-3 py-1.5 text-xs font-medium text-ink-soft">Placement Cell</span>
-        </div>
-        <SphereArt className="pointer-events-none absolute -right-10 top-10 h-[46%] w-[95%]" />
-        <div className="relative mt-auto max-w-lg">
-          <h2 className="font-display text-[52px] font-light leading-[1.02] tracking-[-0.04em]">
-            Every drive, every round, <span className="font-normal">on one track.</span>
-          </h2>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-soft">
-            Attendance, company drives and interview progress for your fastrack batches — in one calm, real-time view.
-          </p>
-          <div className="glass-strong mt-8 grid grid-cols-3 gap-3 rounded-4xl p-4">
-            {[['Batches', 'Live'], ['Rounds', 'Tracked'], ['Offers', 'Celebrated']].map(([k, v], i) => (
-              <div key={k}>
-                <p className="text-[11px] text-ink-mute">{k}</p>
-                <p className="num mt-1 text-xl">{v}</p>
-                {i === 2 && <ValueChip className="mt-1">new</ValueChip>}
-              </div>
-            ))}
-          </div>
-        </div>
+    <div className="mx-auto grid min-h-screen max-w-6xl items-center gap-6 px-4 py-8 lg:grid-cols-2 lg:gap-10 lg:px-8">
+      {/* Intro (desktop) */}
+      <section className="hidden lg:block">
+        <Logo />
+        <h2 className="mt-10 text-4xl font-semibold leading-tight tracking-tight">
+          Placements, <span className="text-grad">on track.</span>
+        </h2>
+        <p className="mt-3 max-w-md text-ink-soft">Attendance, company drives and interview progress for your fastrack batches — all in one place.</p>
+        <Card className="mt-8 p-5">
+          <p className="text-sm font-medium">placement progress</p>
+          <HeroCurve />
+        </Card>
+        <ul className="mt-4 grid grid-cols-3 gap-3">
+          {features.map(({ icon: Icon, title, text }) => (
+            <li key={title}>
+              <Card className="h-full p-4">
+                <span className="bg-grad grid h-9 w-9 place-items-center rounded-xl text-white shadow-glow"><Icon className="h-4 w-4" /></span>
+                <p className="mt-3 text-sm font-medium">{title}</p>
+                <p className="mt-0.5 text-xs text-ink-mute">{text}</p>
+              </Card>
+            </li>
+          ))}
+        </ul>
       </section>
 
-      {/* Sign-in panel */}
-      <section className="flex flex-col">
-        <div className="glass sheen relative flex flex-1 flex-col overflow-hidden rounded-5xl px-5 py-8 sm:px-10 sm:py-12">
-          <SphereArt seed={11} className="pointer-events-none absolute -right-16 -top-10 h-44 w-72 opacity-90 lg:hidden" />
-          <div className="relative lg:hidden"><Logo /></div>
+      {/* Login card */}
+      <section className="mx-auto w-full max-w-md">
+        <div className="mb-6 lg:hidden"><Logo /></div>
+        <Card className="p-6 sm:p-8">
+          <h1 className="text-[28px] font-semibold leading-tight text-brand-600">Hi,<br />Welcome back.</h1>
+          <p className="mt-2 text-sm text-ink-mute">
+            {DEMO_MODE ? 'Pick a role to explore with sample data.' : 'Sign in with the account issued by your placement cell.'}
+          </p>
 
-          <div className="relative mx-auto my-auto w-full max-w-md pt-24 lg:pt-0">
-            <h1 className="font-display text-[40px] font-light leading-none tracking-[-0.04em] sm:text-5xl">Welcome back</h1>
-            <p className="mt-3 text-sm text-ink-mute">
-              {DEMO_MODE ? 'Pick a role to explore the app with sample data.' : 'Sign in with the account issued by your placement cell.'}
-            </p>
+          {DEMO_MODE && <div className="mt-6"><DemoRolePicker /></div>}
 
-            {DEMO_MODE && <div className="mt-8"><DemoRolePicker /></div>}
-
-            <form onSubmit={onSubmit} className={DEMO_MODE ? 'mt-6 space-y-4 border-t border-line pt-6' : 'mt-8 space-y-4'}>
-              <div>
-                <label htmlFor="email" className="label">Email</label>
-                <div className="relative">
-                  <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-mute" />
-                  <input id="email" type="email" autoComplete="email" required className="input pl-11" placeholder="you@college.edu"
-                    value={email} onChange={(e) => setEmail(e.target.value)} />
-                </div>
+          <form onSubmit={onSubmit} className={DEMO_MODE ? 'mt-6 space-y-4 border-t border-line pt-6' : 'mt-8 space-y-4'}>
+            <div>
+              <label htmlFor="email" className="label">user name or email :</label>
+              <input id="email" type="email" autoComplete="email" required className="input" placeholder="username@mail.com"
+                value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div>
+              <label htmlFor="password" className="label">password :</label>
+              <div className="relative">
+                <input id="password" type={show ? 'text' : 'password'} autoComplete="current-password" required className="input pr-12" placeholder="••••••••"
+                  value={password} onChange={(e) => setPassword(e.target.value)} />
+                <button type="button" onClick={() => setShow((s) => !s)} aria-label={show ? 'Hide password' : 'Show password'}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-mute hover:text-brand-600">
+                  {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
-              <div>
-                <label htmlFor="password" className="label">Password</label>
-                <div className="relative">
-                  <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-mute" />
-                  <input id="password" type="password" autoComplete="current-password" required className="input pl-11" placeholder="••••••••"
-                    value={password} onChange={(e) => setPassword(e.target.value)} />
-                </div>
-              </div>
-              {error && <p className="rounded-2xl bg-rose-50/90 px-4 py-2.5 text-sm text-rose-700" role="alert">{error}</p>}
-              <Button type="submit" size="lg" block loading={busy} icon={<ArrowUpRight className="h-4 w-4" />}>Sign in</Button>
-            </form>
+              {!DEMO_MODE && <p className="mt-1.5 text-right text-[11px] text-brand-500">Forgot password? Ask your placement admin.</p>}
+            </div>
+            {error && <p className="rounded-2xl bg-coral-soft px-4 py-2.5 text-sm text-coral" role="alert">{error}</p>}
+            <Button type="submit" size="lg" block loading={busy}>login</Button>
+          </form>
 
-            {DEMO_MODE ? (
-              <button onClick={resetDemo} className="mt-6 text-xs font-medium text-ink-mute hover:text-ink">Reset demo data</button>
-            ) : (
-              <p className="mt-8 flex items-center gap-2 text-xs text-ink-mute">
-                <ShieldCheck className="h-4 w-4" /> Accounts are created by the placement cell admin.
-              </p>
-            )}
-          </div>
-        </div>
+          {DEMO_MODE && (
+            <button onClick={resetDemo} className="mt-5 w-full text-center text-xs text-ink-mute hover:text-brand-600">Reset demo data</button>
+          )}
+        </Card>
       </section>
     </div>
   )

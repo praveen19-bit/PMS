@@ -39,10 +39,10 @@ export function CommandPalette({ open, onClose, nav, onRefresh, onSignOut }: Pro
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-start justify-center px-4 pt-[12vh]">
-      <div className="absolute inset-0 bg-ink/25 backdrop-blur-[6px]" onClick={onClose} aria-hidden />
-      <div role="dialog" aria-modal="true" aria-label="Search" className="glass-strong sheen relative w-full max-w-lg animate-fade-up rounded-4xl p-2">
+      <div className="absolute inset-0 bg-[#2B2453]/30 backdrop-blur-[6px]" onClick={onClose} aria-hidden />
+      <div role="dialog" aria-modal="true" aria-label="Search" className="glass-strong sheen relative w-full max-w-lg animate-fade-up rounded-3xl p-2">
         <div className="flex items-center gap-3 px-3 py-2">
-          <Search className="h-4 w-4 text-ink-mute" />
+          <Search className="h-4 w-4 text-brand-500" />
           <input
             autoFocus
             value={q}
@@ -67,9 +67,9 @@ export function CommandPalette({ open, onClose, nav, onRefresh, onSignOut }: Pro
               <button
                 onMouseEnter={() => setActive(i)}
                 onClick={() => run(a)}
-                className={cn('flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm', i === active && 'bg-white/90')}
+                className={cn('flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm', i === active && 'bg-brand-50')}
               >
-                <span className={cn('grid h-8 w-8 place-items-center rounded-full', i === active ? 'bg-ink text-white' : 'bg-white/80 text-ink')}><a.icon className="h-4 w-4" /></span>
+                <span className={cn('grid h-8 w-8 place-items-center rounded-full', i === active ? 'bg-grad text-white' : 'bg-[#F1F0F8] text-ink-soft')}><a.icon className="h-4 w-4" /></span>
                 <span className="flex-1">{a.label}</span>
                 {i === active && <CornerDownLeft className="h-3.5 w-3.5 text-ink-mute" />}
               </button>
