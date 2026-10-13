@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useState, type ReactNode } from 'react'
-import { CheckCircle2, XCircle } from 'lucide-react'
+import { Check, X } from 'lucide-react'
 import { cn } from './cn'
 
 type ToastKind = 'success' | 'error'
@@ -18,16 +18,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={push}>
       {children}
-      <div className="pointer-events-none fixed inset-x-0 top-3 z-[60] flex flex-col items-center gap-2 px-4" aria-live="polite">
+      <div className="pointer-events-none fixed inset-x-0 top-4 z-[60] flex flex-col items-center gap-2 px-4" aria-live="polite">
         {items.map((t) => (
-          <div
-            key={t.id}
-            className={cn(
-              'pointer-events-auto flex max-w-md items-center gap-2 rounded-full border bg-white px-4 py-2.5 text-sm font-medium shadow-lg',
-              t.kind === 'success' ? 'border-emerald-100' : 'border-rose-100',
-            )}
-          >
-            {t.kind === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" /> : <XCircle className="h-4 w-4 shrink-0 text-rose-500" />}
+          <div key={t.id} className="glass-strong pointer-events-auto flex max-w-md animate-fade-up items-center gap-2.5 rounded-full py-2 pl-2 pr-4 text-sm font-medium">
+            <span className={cn('grid h-6 w-6 shrink-0 place-items-center rounded-full', t.kind === 'success' ? 'bg-lime text-lime-ink' : 'bg-rose-500 text-white')}>
+              {t.kind === 'success' ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <X className="h-3.5 w-3.5" strokeWidth={3} />}
+            </span>
             {t.message}
           </div>
         ))}

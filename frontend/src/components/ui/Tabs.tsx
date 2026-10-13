@@ -1,9 +1,10 @@
 import { cn } from './cn'
 
+/** Segmented pill control; the active segment is solid black. */
 export function Tabs<T extends string>({ value, onChange, items }: { value: T; onChange: (v: T) => void; items: { value: T; label: string; count?: number }[] }) {
   return (
-    <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0" role="tablist">
-      <div className="inline-flex gap-1 rounded-full border border-line bg-white p-1 shadow-card">
+    <div className="-mx-4 overflow-x-auto px-4 py-1 scrollbar-none sm:mx-0 sm:px-0" role="tablist">
+      <div className="glass inline-flex gap-1 rounded-full p-1">
         {items.map((it) => (
           <button
             key={it.value}
@@ -11,12 +12,12 @@ export function Tabs<T extends string>({ value, onChange, items }: { value: T; o
             aria-selected={value === it.value}
             onClick={() => onChange(it.value)}
             className={cn(
-              'whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-semibold transition',
-              value === it.value ? 'bg-brand-gradient text-white shadow-glow' : 'text-ink-soft hover:text-brand-700',
+              'whitespace-nowrap rounded-full px-4 py-1.5 text-[13px] font-medium transition',
+              value === it.value ? 'bg-ink text-white shadow-glow' : 'text-ink-soft hover:bg-white/70 hover:text-ink',
             )}
           >
             {it.label}
-            {it.count !== undefined && <span className="ml-1.5 opacity-70">{it.count}</span>}
+            {it.count !== undefined && <span className={cn('ml-1.5 tabular-nums', value === it.value ? 'text-lime' : 'text-ink-mute')}>{it.count}</span>}
           </button>
         ))}
       </div>

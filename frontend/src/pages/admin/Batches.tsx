@@ -58,7 +58,7 @@ export default function AdminBatches() {
               <Card key={b.id} className="p-5">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <h3 className="truncate font-bold">{b.name}</h3>
+                    <h3 className="truncate font-medium">{b.name}</h3>
                     <p className="text-sm text-ink-mute">{b.department} · {b.year}</p>
                   </div>
                   <div className="flex">
@@ -67,8 +67,8 @@ export default function AdminBatches() {
                   </div>
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-2 text-center">
-                  <div className="rounded-xl bg-canvas py-2"><p className="text-lg font-extrabold">{s?.student_count ?? '–'}</p><p className="text-[11px] text-ink-mute">Students</p></div>
-                  <div className="rounded-xl bg-canvas py-2"><p className="text-lg font-extrabold">{s ? `${Math.round(s.attendance_pct)}%` : '–'}</p><p className="text-[11px] text-ink-mute">Attendance</p></div>
+                  <div className="rounded-xl bg-white/60 py-2"><p className="text-lg font-light font-display tracking-tight">{s?.student_count ?? '–'}</p><p className="text-[11px] text-ink-mute">Students</p></div>
+                  <div className="rounded-xl bg-white/60 py-2"><p className="text-lg font-light font-display tracking-tight">{s ? `${Math.round(s.attendance_pct)}%` : '–'}</p><p className="text-[11px] text-ink-mute">Attendance</p></div>
                 </div>
               </Card>
             )

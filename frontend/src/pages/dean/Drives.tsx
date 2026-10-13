@@ -76,19 +76,19 @@ export default function DeanDrives() {
           {/* Table on desktop, stacked rows on mobile */}
           <div className="hidden md:block">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-line bg-canvas text-xs uppercase tracking-wide text-ink-mute">
-                <tr><th className="px-5 py-3 font-semibold">Company</th><th className="font-semibold">CTC</th><th className="font-semibold">Date</th><th className="font-semibold">Departments</th><th className="font-semibold">Applicants</th><th /></tr>
+              <thead className="border-b border-line text-xs text-ink-mute">
+                <tr><th className="px-5 py-3 font-medium">Company</th><th className="font-medium">CTC</th><th className="font-medium">Date</th><th className="font-medium">Departments</th><th className="font-medium">Applicants</th><th /></tr>
               </thead>
               <tbody className="divide-y divide-line">
                 {drives.data.map((d) => {
                   const past = (daysUntil(d.drive_date) ?? 0) < 0
                   return (
-                    <tr key={d.id} className="hover:bg-canvas/60">
-                      <td className="px-5 py-3"><p className="font-semibold">{d.company_name}</p><p className="text-xs text-ink-mute">{d.role_offered}</p></td>
-                      <td className="font-medium text-emerald-600">{d.ctc || '—'}</td>
+                    <tr key={d.id} className="hover:bg-white/50">
+                      <td className="px-5 py-3"><p className="font-medium">{d.company_name}</p><p className="text-xs text-ink-mute">{d.role_offered}</p></td>
+                      <td className="font-medium text-brand-700">{d.ctc || '—'}</td>
                       <td><span className="flex items-center gap-2">{fmtDate(d.drive_date)}{past && <Badge>Past</Badge>}</span></td>
                       <td className="text-xs text-ink-soft">{d.eligible_departments.join(', ') || 'All'}</td>
-                      <td><span className="inline-flex items-center gap-1 font-semibold"><Users className="h-3.5 w-3.5 text-ink-mute" />{d.application_count ?? 0}</span></td>
+                      <td><span className="inline-flex items-center gap-1 font-medium"><Users className="h-3.5 w-3.5 text-ink-mute" />{d.application_count ?? 0}</span></td>
                       <td className="pr-4 text-right">
                         <Button variant="ghost" size="sm" onClick={() => startEdit(d)} aria-label={`Edit ${d.company_name}`}><Pencil className="h-4 w-4" /></Button>
                         <Button variant="ghost" size="sm" onClick={() => setToDelete(d)} aria-label={`Delete ${d.company_name}`}><Trash2 className="h-4 w-4 text-rose-500" /></Button>
@@ -103,7 +103,7 @@ export default function DeanDrives() {
             {drives.data.map((d) => (
               <li key={d.id} className="flex items-center gap-3 px-4 py-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold">{d.company_name}</p>
+                  <p className="truncate font-medium">{d.company_name}</p>
                   <p className="truncate text-xs text-ink-mute">{d.role_offered} · {fmtDate(d.drive_date)} · {d.application_count ?? 0} applied</p>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => startEdit(d)} aria-label="Edit"><Pencil className="h-4 w-4" /></Button>

@@ -97,7 +97,7 @@ export default function AdminUsers() {
               <li key={u.id} className="flex items-center gap-3 px-4 py-3 sm:px-5">
                 <Avatar name={u.full_name} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold">{u.full_name}{u.id === me?.profile.id && <span className="ml-1 text-xs text-ink-mute">(you)</span>}</p>
+                  <p className="truncate text-sm font-medium">{u.full_name}{u.id === me?.profile.id && <span className="ml-1 text-xs text-ink-mute">(you)</span>}</p>
                   <p className="truncate text-xs text-ink-mute">
                     {u.student ? `${u.student.roll_no} · ${u.student.department} · ${batchName.get(u.student.batch_id ?? '') ?? 'No batch'}` : u.role === 'student' ? 'Student details missing' : '—'}
                   </p>
@@ -139,7 +139,7 @@ export default function AdminUsers() {
                 </select>
               </Field>
               <label className="flex items-center gap-2 self-end pb-2.5 text-sm font-medium">
-                <input type="checkbox" className="h-4 w-4 accent-brand-500" checked={form.is_fastrack} onChange={(e) => set('is_fastrack', e.target.checked)} />
+                <input type="checkbox" className="h-4 w-4 accent-ink" checked={form.is_fastrack} onChange={(e) => set('is_fastrack', e.target.checked)} />
                 Fastrack student
               </label>
             </>

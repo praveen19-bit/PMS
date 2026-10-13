@@ -1,13 +1,11 @@
 import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from '@/routes/ProtectedRoute'
-import { StudentLayout } from '@/layouts/StudentLayout'
-import { StaffLayout } from '@/layouts/StaffLayout'
+import { AppShell } from '@/layouts/AppShell'
 import { FullPageSpinner } from '@/components/ui/States'
 import { useAuth } from '@/hooks/useAuth'
 import { HOME_BY_ROLE } from '@/hooks/useRole'
 import Login from '@/pages/Login'
-import { DemoBanner } from '@/components/DemoBanner'
 
 import StudentHome from '@/pages/student/Home'
 import StudentDrives from '@/pages/student/Drives'
@@ -34,13 +32,12 @@ function RoleRedirect() {
 export default function App() {
   return (
     <Suspense fallback={<FullPageSpinner />}>
-      <DemoBanner />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<RoleRedirect />} />
 
         <Route element={<ProtectedRoute roles={['student']} />}>
-          <Route path="/student" element={<StudentLayout />}>
+          <Route path="/student" element={<AppShell />}>
             <Route index element={<StudentHome />} />
             <Route path="drives" element={<StudentDrives />} />
             <Route path="applications" element={<StudentApplications />} />
@@ -49,7 +46,7 @@ export default function App() {
         </Route>
 
         <Route element={<ProtectedRoute roles={['faculty']} />}>
-          <Route path="/faculty" element={<StaffLayout />}>
+          <Route path="/faculty" element={<AppShell />}>
             <Route index element={<Navigate to="attendance" replace />} />
             <Route path="attendance" element={<FacultyAttendance />} />
             <Route path="students" element={<FacultyStudents />} />
@@ -58,7 +55,7 @@ export default function App() {
         </Route>
 
         <Route element={<ProtectedRoute roles={['dean', 'admin']} />}>
-          <Route path="/dean" element={<StaffLayout />}>
+          <Route path="/dean" element={<AppShell />}>
             <Route index element={<Navigate to="analytics" replace />} />
             <Route path="analytics" element={<DeanAnalytics />} />
             <Route path="drives" element={<DeanDrives />} />
@@ -67,7 +64,7 @@ export default function App() {
         </Route>
 
         <Route element={<ProtectedRoute roles={['admin']} />}>
-          <Route path="/admin" element={<StaffLayout />}>
+          <Route path="/admin" element={<AppShell />}>
             <Route index element={<Navigate to="users" replace />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="batches" element={<AdminBatches />} />

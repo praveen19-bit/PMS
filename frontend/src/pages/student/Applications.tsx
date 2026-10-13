@@ -40,10 +40,10 @@ export default function StudentApplications() {
             <Card key={a.id} id={a.id} className="scroll-mt-24 p-5">
               <div className="mb-4 flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <h3 className="truncate font-bold">{a.drive?.company_name ?? 'Drive'}</h3>
+                  <h3 className="truncate font-medium">{a.drive?.company_name ?? 'Drive'}</h3>
                   <p className="truncate text-sm text-ink-soft">{a.drive?.role_offered}</p>
                   <p className="mt-0.5 text-xs text-ink-mute">
-                    {a.drive?.ctc && <span className="font-semibold text-emerald-600">{a.drive.ctc} · </span>}
+                    {a.drive?.ctc && <span className="font-medium text-brand-700">{a.drive.ctc} · </span>}
                     Drive {fmtDate(a.drive?.drive_date)}
                   </p>
                 </div>

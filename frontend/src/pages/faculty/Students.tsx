@@ -58,7 +58,7 @@ export default function FacultyStudents() {
               <Card key={s.user_id} className="flex items-center gap-3 p-4">
                 <Avatar name={s.full_name} className="h-11 w-11" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold">{s.full_name}</p>
+                  <p className="truncate font-medium">{s.full_name}</p>
                   <p className="text-xs text-ink-mute">{s.roll_no} · {s.department}</p>
                 </div>
                 <div className="text-right">

@@ -4,18 +4,59 @@
 
 @layer base {
   html { -webkit-tap-highlight-color: transparent; }
-  body { @apply bg-canvas font-sans text-ink antialiased; }
-  :focus-visible { @apply outline-none ring-2 ring-brand-400 ring-offset-2 ring-offset-canvas; }
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+    /* Soft light pools behind the glass so the blur has something to refract. */
+    background-image:
+      radial-gradient(60rem 40rem at 8% -10%, rgba(255,255,255,0.95), transparent 60%),
+      radial-gradient(40rem 30rem at 100% 0%, rgba(212,242,92,0.20), transparent 60%),
+      radial-gradient(50rem 40rem at 60% 110%, rgba(255,255,255,0.8), transparent 60%);
+    background-attachment: fixed;
+  }
+  :focus-visible { @apply outline-none ring-2 ring-ink/70 ring-offset-2 ring-offset-canvas; }
+  h1, h2, h3 { @apply font-display; }
 }
 
 @layer components {
-  .input {
-    @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-mute
-           shadow-card transition focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-100
-           disabled:cursor-not-allowed disabled:bg-slate-50;
+  /* Liquid glass: translucent fill, heavy blur + saturation, bright rim, soft depth. */
+  .glass {
+    background: linear-gradient(160deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.52) 100%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.75);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.95),
+      inset 0 -1px 0 rgba(17,18,20,0.03),
+      0 1px 2px rgba(16,18,24,0.04),
+      0 14px 34px -16px rgba(16,18,24,0.16);
   }
-  .label { @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-soft; }
-  .text-accent-gradient { @apply bg-accent-gradient bg-clip-text text-transparent; }
-  .blob { @apply pointer-events-none absolute rounded-full blur-3xl; }
+  .glass-strong {
+    background: linear-gradient(160deg, rgba(255,255,255,0.86) 0%, rgba(246,247,249,0.66) 100%);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    backdrop-filter: blur(30px) saturate(200%);
+    border: 1px solid rgba(255,255,255,0.85);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,1),
+      inset 0 0 0 0.5px rgba(255,255,255,0.6),
+      0 20px 50px -20px rgba(16,18,24,0.30);
+  }
+  /* Specular sheen across the top edge — add to a positioned glass element. */
+  .sheen { position: relative; isolation: isolate; }
+  .sheen::before {
+    content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1;
+    background:
+      radial-gradient(120% 60% at 15% 0%, rgba(255,255,255,0.75), transparent 55%),
+      linear-gradient(180deg, rgba(255,255,255,0.35), transparent 35%);
+  }
+  .input {
+    @apply w-full rounded-2xl border border-white/80 bg-white/70 px-4 py-3 text-sm text-ink placeholder:text-ink-mute
+           shadow-[inset_0_1px_2px_rgba(17,18,20,0.05)] backdrop-blur transition
+           focus:border-ink/20 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-300/40
+           disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .label { @apply mb-1.5 block text-xs font-medium text-ink-soft; }
+  .num { @apply font-display font-light tracking-tight tabular-nums; }
   .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem); }
+  .scrollbar-none { scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
 }

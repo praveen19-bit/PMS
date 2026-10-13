@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
-import { Lock, Mail, ShieldCheck } from 'lucide-react'
+import { ArrowUpRight, Lock, Mail, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Logo } from '@/components/ui/Logo'
+import { SphereArt } from '@/components/ui/SphereArt'
+import { ValueChip } from '@/components/ui/Card'
 import { FullPageSpinner } from '@/components/ui/States'
 import { useAuth } from '@/hooks/useAuth'
 import { HOME_BY_ROLE } from '@/hooks/useRole'
@@ -39,63 +41,76 @@ export default function Login() {
   }
 
   return (
-    <div className="relative grid min-h-screen overflow-hidden lg:grid-cols-2">
-      <div className="blob -left-32 -top-32 h-96 w-96 bg-brand-300/50" />
-      <div className="blob -bottom-24 right-0 h-80 w-80 bg-teal-200/50 lg:right-1/2" />
-
-      {/* Brand panel (desktop) */}
-      <section className="relative hidden flex-col justify-between bg-brand-gradient p-12 text-white lg:flex">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.18),transparent_45%)]" />
-        <div className="relative"><span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">Placement Cell</span></div>
-        <div className="relative max-w-md">
-          <h2 className="text-4xl font-extrabold leading-tight">Every drive, every round, every student — on one track.</h2>
-          <p className="mt-4 text-white/80">Attendance, company drives and interview progress for your fastrack batches, in real time.</p>
+    <div className="mx-auto grid min-h-screen max-w-[1480px] gap-4 p-3 sm:p-5 lg:grid-cols-[1.1fr_1fr] lg:gap-6 lg:p-6">
+      {/* Showcase panel */}
+      <section className="glass sheen relative hidden flex-col overflow-hidden rounded-5xl p-10 lg:flex">
+        <div className="flex items-center justify-between">
+          <Logo />
+          <span className="rounded-full bg-white/80 px-3 py-1.5 text-xs font-medium text-ink-soft">Placement Cell</span>
         </div>
-        <p className="relative text-sm text-white/70">© {new Date().getFullYear()} Fastrack Tracker</p>
+        <SphereArt className="pointer-events-none absolute -right-10 top-10 h-[46%] w-[95%]" />
+        <div className="relative mt-auto max-w-lg">
+          <h2 className="font-display text-[52px] font-light leading-[1.02] tracking-[-0.04em]">
+            Every drive, every round, <span className="font-normal">on one track.</span>
+          </h2>
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-soft">
+            Attendance, company drives and interview progress for your fastrack batches — in one calm, real-time view.
+          </p>
+          <div className="glass-strong mt-8 grid grid-cols-3 gap-3 rounded-4xl p-4">
+            {[['Batches', 'Live'], ['Rounds', 'Tracked'], ['Offers', 'Celebrated']].map(([k, v], i) => (
+              <div key={k}>
+                <p className="text-[11px] text-ink-mute">{k}</p>
+                <p className="num mt-1 text-xl">{v}</p>
+                {i === 2 && <ValueChip className="mt-1">new</ValueChip>}
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      <section className="relative flex items-center justify-center px-5 py-12">
-        <div className="w-full max-w-sm">
-          <Logo />
-          <h1 className="mt-8 text-3xl font-extrabold tracking-tight">
-            Welcome <span className="text-accent-gradient">back</span>
-          </h1>
-          <p className="mt-2 text-sm text-ink-mute">
-            {DEMO_MODE ? 'Pick a role to explore the app with sample data.' : 'Sign in with the account issued by your placement cell.'}
-          </p>
+      {/* Sign-in panel */}
+      <section className="flex flex-col">
+        <div className="glass sheen relative flex flex-1 flex-col overflow-hidden rounded-5xl px-5 py-8 sm:px-10 sm:py-12">
+          <SphereArt seed={11} className="pointer-events-none absolute -right-16 -top-10 h-44 w-72 opacity-90 lg:hidden" />
+          <div className="relative lg:hidden"><Logo /></div>
 
-          {DEMO_MODE && (
-            <div className="mt-8"><DemoRolePicker /></div>
-          )}
-
-          <form onSubmit={onSubmit} className={DEMO_MODE ? 'mt-6 space-y-4 border-t border-line pt-6' : 'mt-8 space-y-4'}>
-            <div>
-              <label htmlFor="email" className="label">Email</label>
-              <div className="relative">
-                <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-mute" />
-                <input id="email" type="email" autoComplete="email" required className="input pl-10" placeholder="you@college.edu"
-                  value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
-            </div>
-            <div>
-              <label htmlFor="password" className="label">Password</label>
-              <div className="relative">
-                <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-mute" />
-                <input id="password" type="password" autoComplete="current-password" required className="input pl-10" placeholder="••••••••"
-                  value={password} onChange={(e) => setPassword(e.target.value)} />
-              </div>
-            </div>
-            {error && <p className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert">{error}</p>}
-            <Button type="submit" size="lg" block loading={busy}>Sign in</Button>
-          </form>
-
-          {DEMO_MODE ? (
-            <button onClick={resetDemo} className="mt-6 text-xs font-semibold text-ink-mute hover:text-brand-600">Reset demo data</button>
-          ) : (
-            <p className="mt-8 flex items-center gap-2 text-xs text-ink-mute">
-              <ShieldCheck className="h-4 w-4 text-emerald-500" /> Accounts are created by the placement cell admin.
+          <div className="relative mx-auto my-auto w-full max-w-md pt-24 lg:pt-0">
+            <h1 className="font-display text-[40px] font-light leading-none tracking-[-0.04em] sm:text-5xl">Welcome back</h1>
+            <p className="mt-3 text-sm text-ink-mute">
+              {DEMO_MODE ? 'Pick a role to explore the app with sample data.' : 'Sign in with the account issued by your placement cell.'}
             </p>
-          )}
+
+            {DEMO_MODE && <div className="mt-8"><DemoRolePicker /></div>}
+
+            <form onSubmit={onSubmit} className={DEMO_MODE ? 'mt-6 space-y-4 border-t border-line pt-6' : 'mt-8 space-y-4'}>
+              <div>
+                <label htmlFor="email" className="label">Email</label>
+                <div className="relative">
+                  <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-mute" />
+                  <input id="email" type="email" autoComplete="email" required className="input pl-11" placeholder="you@college.edu"
+                    value={email} onChange={(e) => setEmail(e.target.value)} />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="password" className="label">Password</label>
+                <div className="relative">
+                  <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-mute" />
+                  <input id="password" type="password" autoComplete="current-password" required className="input pl-11" placeholder="••••••••"
+                    value={password} onChange={(e) => setPassword(e.target.value)} />
+                </div>
+              </div>
+              {error && <p className="rounded-2xl bg-rose-50/90 px-4 py-2.5 text-sm text-rose-700" role="alert">{error}</p>}
+              <Button type="submit" size="lg" block loading={busy} icon={<ArrowUpRight className="h-4 w-4" />}>Sign in</Button>
+            </form>
+
+            {DEMO_MODE ? (
+              <button onClick={resetDemo} className="mt-6 text-xs font-medium text-ink-mute hover:text-ink">Reset demo data</button>
+            ) : (
+              <p className="mt-8 flex items-center gap-2 text-xs text-ink-mute">
+                <ShieldCheck className="h-4 w-4" /> Accounts are created by the placement cell admin.
+              </p>
+            )}
+          </div>
         </div>
       </section>
     </div>

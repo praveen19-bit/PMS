@@ -70,17 +70,17 @@ export default function DeanAssignments() {
               <Card key={b.id} className="pb-3">
                 <CardHeader title={b.name} subtitle={`${b.department} · ${b.year}`} />
                 {list.length === 0 ? (
-                  <p className="px-5 pt-3 text-sm text-amber-700">No faculty assigned</p>
+                  <p className="px-5 pt-3 text-sm text-ink-mute">No faculty assigned yet</p>
                 ) : (
                   <ul className="mt-2">
                     {list.map((a) => (
                       <li key={a.id} className="flex items-center gap-3 px-5 py-2">
                         <Avatar name={a.faculty_name ?? '?'} className="h-8 w-8" />
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-semibold">{a.faculty_name}</p>
+                          <p className="truncate text-sm font-medium">{a.faculty_name}</p>
                           <p className="text-xs text-ink-mute">since {fmtDate(a.assigned_at)}</p>
                         </div>
-                        <button className="rounded-full p-1.5 text-ink-mute hover:bg-rose-50 hover:text-rose-600" aria-label={`Unassign ${a.faculty_name}`}
+                        <button className="rounded-full p-1.5 text-ink-mute hover:bg-rose-50/80 hover:text-rose-600" aria-label={`Unassign ${a.faculty_name}`}
                           onClick={() => unassign.mutate(a.id)}>
                           <X className="h-4 w-4" />
                         </button>

@@ -94,10 +94,10 @@ export default function FacultyAttendance() {
 
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
-          <div className="flex flex-wrap gap-3 text-xs font-semibold">
-            <span className="text-emerald-600">{tally.present} present</span>
-            <span className="text-rose-600">{tally.absent} absent</span>
-            <span className="text-amber-600">{tally.leave} leave</span>
+          <div className="flex flex-wrap gap-3 text-xs font-medium">
+            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-lime" />{tally.present} present</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-ink" />{tally.absent} absent</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-white bg-hatch ring-1 ring-ink/15" />{tally.leave} leave</span>
             {tally.unmarked > 0 && <span className="text-ink-mute">{tally.unmarked} unmarked</span>}
           </div>
           <div className="flex gap-2">
@@ -118,7 +118,7 @@ export default function FacultyAttendance() {
       </Card>
 
       {/* Sticky save bar */}
-      <div className="sticky bottom-4 z-20 mt-4 flex justify-end">
+      <div className="sticky bottom-24 z-20 mt-4 flex justify-end lg:bottom-6">
         <Button size="lg" icon={<Save className="h-4 w-4" />} disabled={!dirty.size} loading={save.isPending} onClick={() => save.mutate()}>
           Save {dirty.size > 0 && `(${dirty.size})`}
         </Button>

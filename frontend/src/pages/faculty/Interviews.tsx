@@ -69,7 +69,7 @@ export default function FacultyInterviews() {
         <Tabs value={selected} onChange={setSelected} items={batches.data.map((b) => ({ value: b.id, label: b.name }))} />
         <div className="flex items-center gap-3">
           <label className="flex shrink-0 items-center gap-2 text-sm font-medium text-ink-soft">
-            <input type="checkbox" className="h-4 w-4 rounded accent-brand-500" checked={onlyActive} onChange={(e) => setOnlyActive(e.target.checked)} />
+            <input type="checkbox" className="h-4 w-4 rounded accent-ink" checked={onlyActive} onChange={(e) => setOnlyActive(e.target.checked)} />
             Active only
           </label>
           <div className="relative flex-1 md:w-64">
@@ -94,7 +94,7 @@ export default function FacultyInterviews() {
                   <button className="flex min-w-0 flex-1 items-center gap-3 text-left" onClick={() => setExpanded(expanded === a.id ? null : a.id)} aria-expanded={expanded === a.id}>
                     <ChevronDown className={`h-4 w-4 shrink-0 text-ink-mute transition ${expanded === a.id ? 'rotate-180' : ''}`} />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold">{a.student_name} <span className="font-normal text-ink-mute">· {a.roll_no}</span></p>
+                      <p className="truncate text-sm font-medium">{a.student_name} <span className="font-normal text-ink-mute">· {a.roll_no}</span></p>
                       <p className="truncate text-xs text-ink-mute">{a.drive?.company_name} — {a.drive?.role_offered} · {fmtDate(a.drive?.drive_date)}</p>
                     </div>
                   </button>
@@ -104,7 +104,7 @@ export default function FacultyInterviews() {
                   </div>
                 </div>
                 {expanded === a.id && (
-                  <div className="border-t border-line bg-canvas/60 px-5 py-4 sm:pl-12"><ApplicationTimeline app={a} /></div>
+                  <div className="border-t border-line bg-white/40 px-5 py-4 sm:pl-12"><ApplicationTimeline app={a} /></div>
                 )}
               </li>
             ))}
@@ -136,7 +136,7 @@ export default function FacultyInterviews() {
             <textarea id="remarks" rows={3} maxLength={500} className="input resize-none" placeholder="e.g. Cleared technical round, HR on Friday" value={remarks} onChange={(e) => setRemarks(e.target.value)} />
           </Field>
           {stage && ['offered', 'rejected', 'withdrawn'].includes(stage) && (
-            <p className="rounded-xl bg-amber-50 p-3 text-xs text-amber-800">This closes the application. Only the dean can change it afterwards.</p>
+            <p className="rounded-2xl bg-lime/40 p-3 text-xs text-lime-ink">This closes the application. Only the dean can change it afterwards.</p>
           )}
         </div>
       </Modal>
