@@ -1,10 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 
-const url = import.meta.env.VITE_SUPABASE_URL
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const url = (import.meta.env.VITE_SUPABASE_URL ?? '').trim()
+const anonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY ?? '').trim()
 
-export const supabaseConfigured = Boolean(url && anonKey)
+// The values shipped in .env.example are placeholders, not a real project.
+const isPlaceholder = (v: string) => /your-project|your-anon-key|^https?:\/\/(example|xxx)/i.test(v)
 
-export const supabase = createClient(url || 'http://localhost:54321', anonKey || 'missing-anon-key', {
+export const supabaseUrl = url
+export const supabaseConfigured = Boolean(url && anonKey && !isPlaceholder(url) && !isPlaceholder(anonKey))
+
+export const supabase = createClient(supabaseConfigured ? url : 'http://localhost:54321', supabaseConfigured ? anonKey : 'missing-anon-key', {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
 })

@@ -28,7 +28,7 @@ npm install
 npm run dev        # open http://localhost:5173
 ```
 
-When there's no Supabase config (or when `VITE_DEMO_MODE=true`), the app starts in **demo mode**:
+When `VITE_DEMO_MODE=true`, or when the Supabase values are missing or still the `.env.example` placeholders, the app starts in **demo mode**. You'll see a dark **Demo mode** bar at the top:
 - Pick **Student, Faculty, Dean or Admin** on the login page.
 - You can also sign in with a demo email such as `ananya@demo.edu`, `meera@demo.edu`, `dean@demo.edu` or `admin@demo.edu`. The password is `demo1234`.
 - The app comes loaded with sample data: 3 batches, 19 students, about 5 weeks of attendance, 6 drives, and applications with interview history.
@@ -81,7 +81,7 @@ python -m pytest -q
 cd frontend
 npm install
 cp .env.example .env        # VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_API_BASE_URL
-npm run dev                 # http://localhost:5173  (keep VITE_DEMO_MODE=false)
+npm run dev                 # http://localhost:5173  (set VITE_DEMO_MODE=false)
 ```
 
 ### RLS tests

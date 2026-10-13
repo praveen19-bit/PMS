@@ -7,6 +7,7 @@ import { FullPageSpinner } from '@/components/ui/States'
 import { useAuth } from '@/hooks/useAuth'
 import { HOME_BY_ROLE } from '@/hooks/useRole'
 import { DEMO_MODE } from '@/lib/config'
+import { supabaseUrl } from '@/lib/supabaseClient'
 import { DemoRolePicker } from '@/components/DemoRolePicker'
 import { resetDemo } from '@/components/DemoBanner'
 
@@ -27,7 +28,11 @@ export default function Login() {
     try {
       await signIn(email.trim(), password)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign in failed')
+      const msg = err instanceof Error ? err.message : 'Sign in failed'
+      // A network failure here means the Supabase URL is wrong or unreachable.
+      setError(/failed to fetch|networkerror|load failed/i.test(msg)
+        ? `Can't reach Supabase at ${supabaseUrl || '(not set)'}. Check VITE_SUPABASE_URL in frontend/.env, or set VITE_DEMO_MODE=true to try the demo.`
+        : msg)
     } finally {
       setBusy(false)
     }
