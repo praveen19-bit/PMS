@@ -24,7 +24,7 @@ export function UserMenu() {
   }, [open])
 
   if (!me) return null
-  const item = 'flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-left text-sm text-ink hover:bg-brand-50 hover:text-brand-700'
+  const item = 'flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-left text-sm text-ink hover:bg-subtle'
 
   return (
     <div ref={ref} className="relative">
@@ -53,7 +53,7 @@ export function UserMenu() {
             </>
           )}
           <div className="h-px bg-line" />
-          <button className={`${item} text-coral`} onClick={signOut} role="menuitem"><LogOut className="h-4 w-4" />Sign out</button>
+          <button className={`${item} text-danger`} onClick={signOut} role="menuitem"><LogOut className="h-4 w-4" />Sign out</button>
         </div>
       )}
     </div>

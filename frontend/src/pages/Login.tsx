@@ -10,22 +10,25 @@ import { HOME_BY_ROLE } from '@/hooks/useRole'
 import { DEMO_MODE } from '@/lib/config'
 import { supabaseUrl } from '@/lib/supabaseClient'
 import { DemoRolePicker } from '@/components/DemoRolePicker'
+import { ThemeToggle } from '@/components/ThemeToggle'
+import { useChartColors } from '@/components/charts'
 import { resetDemo } from '@/components/DemoBanner'
 
 /** Decorative curve for the intro panel (no data, purely illustrative). */
 function HeroCurve() {
+  const c = useChartColors()
   return (
     <svg viewBox="0 0 400 150" className="h-40 w-full" aria-hidden>
       <defs>
         <linearGradient id="hc-fill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#9D7BFF" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="#9D7BFF" stopOpacity="0" />
+          <stop offset="0%" stopColor="#6366F1" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#6366F1" stopOpacity="0" />
         </linearGradient>
       </defs>
-      {[30, 65, 100, 135].map((y) => <line key={y} x1="0" x2="400" y1={y} y2={y} stroke="#ECEAF6" />)}
+      {[30, 65, 100, 135].map((y) => <line key={y} x1="0" x2="400" y1={y} y2={y} stroke={c.grid} />)}
       <path d="M0 120 C40 100 60 70 95 90 S150 120 185 85 S240 20 270 30 S320 95 350 80 S385 70 400 75 V150 H0Z" fill="url(#hc-fill)" />
-      <path d="M0 120 C40 100 60 70 95 90 S150 120 185 85 S240 20 270 30 S320 95 350 80 S385 70 400 75" fill="none" stroke="#7F56F5" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="270" cy="30" r="6" fill="#fff" stroke="#6A3DE8" strokeWidth="3" />
+      <path d="M0 120 C40 100 60 70 95 90 S150 120 185 85 S240 20 270 30 S320 95 350 80 S385 70 400 75" fill="none" stroke={c.primary} strokeWidth="3" strokeLinecap="round" />
+      <circle cx="270" cy="30" r="6" fill={c.dotFill} stroke={c.primary} strokeWidth="3" />
     </svg>
   )
 }
@@ -68,7 +71,7 @@ export default function Login() {
     <div className="mx-auto grid min-h-screen max-w-6xl items-center gap-6 px-4 py-8 lg:grid-cols-2 lg:gap-10 lg:px-8">
       {/* Intro (desktop) */}
       <section className="hidden lg:block">
-        <Logo />
+        <div className="flex items-center justify-between"><Logo /><ThemeToggle /></div>
         <h2 className="mt-10 text-4xl font-semibold leading-tight tracking-tight">
           Placements, <span className="text-grad">on track.</span>
         </h2>
@@ -92,9 +95,9 @@ export default function Login() {
 
       {/* Login card */}
       <section className="mx-auto w-full max-w-md">
-        <div className="mb-6 lg:hidden"><Logo /></div>
+        <div className="mb-6 flex items-center justify-between lg:hidden"><Logo /><ThemeToggle /></div>
         <Card className="p-6 sm:p-8">
-          <h1 className="text-[28px] font-semibold leading-tight text-brand-600">Hi,<br />Welcome back.</h1>
+          <h1 className="text-[28px] font-semibold leading-tight tracking-tight">Hi,<br /><span className="text-grad">Welcome back.</span></h1>
           <p className="mt-2 text-sm text-ink-mute">
             {DEMO_MODE ? 'Pick a role to explore with sample data.' : 'Sign in with the account issued by your placement cell.'}
           </p>
@@ -119,7 +122,7 @@ export default function Login() {
               </div>
               {!DEMO_MODE && <p className="mt-1.5 text-right text-[11px] text-brand-500">Forgot password? Ask your placement admin.</p>}
             </div>
-            {error && <p className="rounded-2xl bg-coral-soft px-4 py-2.5 text-sm text-coral" role="alert">{error}</p>}
+            {error && <p className="rounded-2xl bg-danger/15 px-4 py-2.5 text-sm text-danger" role="alert">{error}</p>}
             <Button type="submit" size="lg" block loading={busy}>login</Button>
           </form>
 

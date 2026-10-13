@@ -80,7 +80,7 @@ export default function DeanAssignments() {
                           <p className="truncate text-sm font-medium">{a.faculty_name}</p>
                           <p className="text-xs text-ink-mute">since {fmtDate(a.assigned_at)}</p>
                         </div>
-                        <button className="rounded-full p-1.5 text-ink-mute hover:bg-coral-soft hover:text-coral" aria-label={`Unassign ${a.faculty_name}`}
+                        <button className="rounded-full p-1.5 text-ink-mute hover:bg-danger/15 hover:text-danger" aria-label={`Unassign ${a.faculty_name}`}
                           onClick={() => unassign.mutate(a.id)}>
                           <X className="h-4 w-4" />
                         </button>

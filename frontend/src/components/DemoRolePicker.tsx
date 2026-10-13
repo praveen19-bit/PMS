@@ -21,7 +21,7 @@ export function DemoRolePicker() {
             <button
               onClick={() => signInAs(id)}
               aria-label={`${role} · ${name}`}
-              className="group flex w-full items-center gap-2.5 rounded-2xl bg-[#F6F5FC] p-2.5 text-left transition hover:bg-brand-50 hover:ring-1 hover:ring-brand-200"
+              className="group flex w-full items-center gap-2.5 rounded-2xl bg-subtle/70 p-2.5 text-left transition hover:bg-brand-50 hover:ring-1 hover:ring-brand-200"
             >
               <span className="bg-grad grid h-9 w-9 shrink-0 place-items-center rounded-xl text-white shadow-glow"><Icon className="h-4 w-4" /></span>
               <span className="min-w-0 flex-1">

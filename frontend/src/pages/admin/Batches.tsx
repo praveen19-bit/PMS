@@ -63,12 +63,12 @@ export default function AdminBatches() {
                   </div>
                   <div className="flex">
                     <Button variant="ghost" size="sm" onClick={() => startEdit(b)} aria-label={`Edit ${b.name}`}><Pencil className="h-4 w-4" /></Button>
-                    <Button variant="ghost" size="sm" onClick={() => setToDelete(b)} aria-label={`Delete ${b.name}`}><Trash2 className="h-4 w-4 text-coral" /></Button>
+                    <Button variant="ghost" size="sm" onClick={() => setToDelete(b)} aria-label={`Delete ${b.name}`}><Trash2 className="h-4 w-4 text-danger" /></Button>
                   </div>
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-2 text-center">
-                  <div className="rounded-2xl bg-[#F6F5FC] py-2"><p className="num text-lg text-brand-600">{s?.student_count ?? '–'}</p><p className="text-[11px] text-ink-mute">Students</p></div>
-                  <div className="rounded-2xl bg-[#F6F5FC] py-2"><p className="num text-lg text-brand-600">{s ? `${Math.round(s.attendance_pct)}%` : '–'}</p><p className="text-[11px] text-ink-mute">Attendance</p></div>
+                  <div className="rounded-2xl bg-subtle/70 py-2"><p className="num text-lg text-brand-600">{s?.student_count ?? '–'}</p><p className="text-[11px] text-ink-mute">Students</p></div>
+                  <div className="rounded-2xl bg-subtle/70 py-2"><p className="num text-lg text-brand-600">{s ? `${Math.round(s.attendance_pct)}%` : '–'}</p><p className="text-[11px] text-ink-mute">Attendance</p></div>
                 </div>
               </Card>
             )

@@ -16,7 +16,7 @@ export function FullPageSpinner() {
 }
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded-3xl bg-white/60', className)} />
+  return <div className={cn('animate-pulse rounded-3xl bg-subtle/60', className)} />
 }
 
 export function ListSkeleton({ rows = 3 }: { rows?: number }) {
@@ -43,7 +43,7 @@ export function EmptyState({ icon, title, message, action }: { icon?: ReactNode;
 export function ErrorState({ title = 'Something went wrong', message, action }: { title?: string; message?: string; action?: { label: string; onClick: () => void } }) {
   return (
     <div className="glass flex flex-col items-center rounded-3xl px-6 py-10 text-center">
-      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-coral-soft text-coral"><AlertTriangle className="h-5 w-5" /></span>
+      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-danger/15 text-danger"><AlertTriangle className="h-5 w-5" /></span>
       <h3 className="mt-3 font-semibold">{title}</h3>
       {message && <p className="mt-1 max-w-sm text-sm text-ink-soft">{message}</p>}
       {action && <Button variant="secondary" size="sm" className="mt-4" onClick={action.onClick}>{action.label}</Button>}

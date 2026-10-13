@@ -2,56 +2,128 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ------------------------------------------------------------------ themes
+   Colours are RGB triplets so Tailwind can apply alpha (bg-brand-500/15). */
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  /* Midnight Navy */
+  --canvas: 11 16 32;        /* #0B1020 */
+  --surface: 20 27 46;       /* #141B2E */
+  --subtle: 28 37 64;        /* #1C2540 */
+  --line: 38 48 77;          /* #26304D */
+  --ink: 231 234 243;        /* #E7EAF3 */
+  --ink-soft: 176 184 205;
+  --ink-mute: 138 147 173;   /* #8A93AD */
+  /* Indigo, inverted for dark: low numbers are deep tints, high numbers are light text. */
+  --brand-50: 24 30 60;   --brand-100: 31 39 82;  --brand-200: 44 54 115; --brand-300: 76 84 184;
+  --brand-400: 129 140 248; --brand-500: 99 102 241; --brand-600: 140 148 250; --brand-700: 165 180 252;
+  --brand-800: 199 210 254; --brand-900: 224 231 255;
+  --success: 34 197 94;      /* #22C55E */
+  --warning: 245 158 11;     /* #F59E0B */
+  --danger: 239 68 68;       /* #EF4444 */
+  --info: 56 189 248;        /* #38BDF8 */
+
+  --glass-from: rgba(24, 32, 56, 0.78);
+  --glass-to: rgba(18, 24, 43, 0.62);
+  --glass-border: rgba(148, 163, 214, 0.12);
+  --glass-rim: rgba(255, 255, 255, 0.06);
+  --glass-sheen: rgba(129, 140, 248, 0.10);
+  --glass-strong-from: rgba(28, 37, 64, 0.94);
+  --glass-strong-to: rgba(20, 27, 46, 0.86);
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.3), 0 16px 40px -18px rgba(0,0,0,0.6);
+  --shadow-glow: 0 10px 26px -10px rgba(99,102,241,0.65);
+  --overlay: rgba(3, 6, 15, 0.6);
+  --pool-1: rgba(99, 102, 241, 0.18);
+  --pool-2: rgba(139, 92, 246, 0.12);
+  --pool-3: rgba(56, 189, 248, 0.06);
+  --grad-text-from: #818CF8;
+  --grad-text-to: #A78BFA;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --canvas: 244 246 251;     /* #F4F6FB */
+  --surface: 255 255 255;
+  --subtle: 238 241 248;     /* #EEF1F8 */
+  --line: 227 231 240;       /* #E3E7F0 */
+  --ink: 15 23 42;           /* #0F172A */
+  --ink-soft: 71 85 105;
+  --ink-mute: 100 116 139;
+  --brand-50: 238 242 255; --brand-100: 224 231 255; --brand-200: 199 210 254; --brand-300: 165 180 252;
+  --brand-400: 129 140 248; --brand-500: 99 102 241; --brand-600: 79 70 229; --brand-700: 67 56 202;
+  --brand-800: 55 48 163; --brand-900: 49 46 129;
+  --success: 22 163 74;      /* #16A34A */
+  --warning: 217 119 6;      /* #D97706 */
+  --danger: 220 38 38;       /* #DC2626 */
+  --info: 2 132 199;         /* #0284C7 */
+
+  --glass-from: rgba(255, 255, 255, 0.86);
+  --glass-to: rgba(255, 255, 255, 0.68);
+  --glass-border: rgba(255, 255, 255, 0.9);
+  --glass-rim: rgba(255, 255, 255, 1);
+  --glass-sheen: rgba(255, 255, 255, 0.7);
+  --glass-strong-from: rgba(255, 255, 255, 0.96);
+  --glass-strong-to: rgba(248, 250, 255, 0.86);
+  --shadow-card: 0 1px 2px rgba(15,23,42,0.04), 0 14px 34px -16px rgba(15,23,42,0.16);
+  --shadow-glow: 0 10px 24px -10px rgba(79,70,229,0.55);
+  --overlay: rgba(15, 23, 42, 0.35);
+  --pool-1: rgba(99, 102, 241, 0.14);
+  --pool-2: rgba(139, 92, 246, 0.08);
+  --pool-3: rgba(56, 189, 248, 0.06);
+  --grad-text-from: #4F46E5;
+  --grad-text-to: #7C3AED;
+}
+
 @layer base {
   html { -webkit-tap-highlight-color: transparent; }
   body {
     @apply bg-canvas font-sans text-ink antialiased;
-    /* Soft violet and pink pools behind the glass so the blur reads. */
+    font-feature-settings: 'cv11', 'ss01';
+    /* Faint coloured light pools behind the glass so the blur reads. */
     background-image:
-      radial-gradient(42rem 32rem at 0% 0%, rgba(157,123,255,0.22), transparent 60%),
-      radial-gradient(36rem 28rem at 100% 10%, rgba(238,93,166,0.12), transparent 60%),
-      radial-gradient(48rem 36rem at 50% 110%, rgba(127,86,245,0.14), transparent 60%);
+      radial-gradient(44rem 32rem at 0% 0%, var(--pool-1), transparent 60%),
+      radial-gradient(36rem 28rem at 100% 8%, var(--pool-2), transparent 60%),
+      radial-gradient(48rem 36rem at 50% 115%, var(--pool-3), transparent 60%);
     background-attachment: fixed;
   }
   :focus-visible { @apply outline-none ring-2 ring-brand-400 ring-offset-2 ring-offset-canvas; }
+  ::selection { background: rgb(var(--brand-500) / 0.35); }
 }
 
 @layer components {
-  /* Violet gradient used for primary actions and highlights. */
-  .bg-grad { background-image: linear-gradient(135deg, #9D7BFF 0%, #6A3DE8 100%); }
-  .text-grad { @apply bg-clip-text text-transparent; background-image: linear-gradient(135deg, #9D7BFF 0%, #6A3DE8 100%); }
+  /* Primary gradient: indigo → violet. Used sparingly (main button, active states). */
+  .bg-grad { background-image: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); }
+  .text-grad { @apply bg-clip-text text-transparent; background-image: linear-gradient(135deg, var(--grad-text-from) 0%, var(--grad-text-to) 100%); }
 
-  /* Liquid glass: translucent white, blur + saturation, bright rim, soft violet depth. */
+  /* Liquid glass surfaces (theme-aware). */
   .glass {
-    background: linear-gradient(160deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.62) 100%);
-    -webkit-backdrop-filter: blur(22px) saturate(170%);
-    backdrop-filter: blur(22px) saturate(170%);
-    border: 1px solid rgba(255,255,255,0.85);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,1),
-      0 1px 2px rgba(60,40,140,0.04),
-      0 14px 34px -16px rgba(60,40,140,0.20);
+    background: linear-gradient(160deg, var(--glass-from) 0%, var(--glass-to) 100%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    backdrop-filter: blur(22px) saturate(160%);
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-rim), var(--shadow-card);
   }
   .glass-strong {
-    background: linear-gradient(160deg, rgba(255,255,255,0.92) 0%, rgba(250,249,255,0.78) 100%);
-    -webkit-backdrop-filter: blur(28px) saturate(190%);
-    backdrop-filter: blur(28px) saturate(190%);
-    border: 1px solid rgba(255,255,255,0.9);
-    box-shadow: inset 0 1px 0 #fff, 0 22px 50px -20px rgba(60,40,140,0.32);
+    background: linear-gradient(160deg, var(--glass-strong-from) 0%, var(--glass-strong-to) 100%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-rim), 0 24px 60px -24px rgba(0,0,0,0.55);
   }
-  /* Specular highlight along the top edge of a glass surface. */
   .sheen { position: relative; isolation: isolate; }
   .sheen::before {
     content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1;
-    background: radial-gradient(120% 60% at 10% 0%, rgba(255,255,255,0.8), transparent 55%);
+    background: radial-gradient(120% 60% at 10% 0%, var(--glass-sheen), transparent 55%);
   }
+  .overlay { background: var(--overlay); }
   .input {
-    @apply w-full rounded-full border border-transparent bg-[#F1F0F8]/90 px-5 py-3 text-sm text-ink placeholder:text-ink-mute
-           transition focus:border-brand-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-100
+    @apply w-full rounded-xl border border-line bg-subtle/80 px-4 py-2.5 text-sm text-ink placeholder:text-ink-mute
+           transition focus:border-brand-400 focus:bg-surface focus:outline-none focus:ring-4 focus:ring-brand-500/20
            disabled:cursor-not-allowed disabled:opacity-60;
   }
-  textarea.input { @apply rounded-3xl; }
-  .label { @apply mb-1.5 ml-1 block text-xs text-ink-soft; }
+  select.input option { @apply bg-surface text-ink; }
+  .label { @apply mb-1.5 block text-xs font-medium text-ink-soft; }
   .num { @apply font-semibold tracking-tight tabular-nums; }
   .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem); }
   .scrollbar-none { scrollbar-width: none; }

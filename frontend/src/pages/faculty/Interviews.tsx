@@ -104,7 +104,7 @@ export default function FacultyInterviews() {
                   </div>
                 </div>
                 {expanded === a.id && (
-                  <div className="border-t border-line bg-[#F8F7FD]/70 px-5 py-4 sm:pl-12"><ApplicationTimeline app={a} /></div>
+                  <div className="border-t border-line bg-subtle/40 px-5 py-4 sm:pl-12"><ApplicationTimeline app={a} /></div>
                 )}
               </li>
             ))}
@@ -136,7 +136,7 @@ export default function FacultyInterviews() {
             <textarea id="remarks" rows={3} maxLength={500} className="input resize-none" placeholder="e.g. Cleared technical round, HR on Friday" value={remarks} onChange={(e) => setRemarks(e.target.value)} />
           </Field>
           {stage && ['offered', 'rejected', 'withdrawn'].includes(stage) && (
-            <p className="rounded-2xl bg-amber-soft p-3 text-xs text-[#9A6300]">This closes the application. Only the dean can change it afterwards.</p>
+            <p className="rounded-2xl bg-warning/15 p-3 text-xs text-warning">This closes the application. Only the dean can change it afterwards.</p>
           )}
         </div>
       </Modal>

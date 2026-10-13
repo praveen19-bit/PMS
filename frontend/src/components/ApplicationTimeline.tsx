@@ -41,10 +41,11 @@ export function ApplicationTimeline({ app }: { app: Application }) {
             <span
               className={cn(
                 'relative z-10 grid h-6 w-6 shrink-0 place-items-center rounded-full',
-                (s.state === 'offer' || s.state === 'done') && 'bg-grad text-white',
-                s.state === 'failed' && 'bg-coral text-white',
-                s.state === 'current' && 'bg-white ring-2 ring-brand-500',
-                s.state === 'upcoming' && 'border-2 border-dashed border-brand-200 bg-white',
+                s.state === 'done' && 'bg-grad text-white',
+                s.state === 'offer' && 'bg-success text-white',
+                s.state === 'failed' && 'bg-danger text-white',
+                s.state === 'current' && 'bg-surface ring-2 ring-brand-500',
+                s.state === 'upcoming' && 'border-2 border-dashed border-line bg-surface',
               )}
             >
               {s.state === 'failed' ? <X className="h-3 w-3" strokeWidth={3} />
@@ -52,10 +53,10 @@ export function ApplicationTimeline({ app }: { app: Application }) {
                 : s.state !== 'upcoming' ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
             </span>
             <div className="min-w-0 pt-0.5">
-              <p className={cn('text-sm font-medium', s.state === 'upcoming' && 'font-normal text-ink-mute', s.state === 'failed' && 'text-coral', s.state === 'offer' && 'text-brand-600')}>{s.label}</p>
+              <p className={cn('text-sm font-medium', s.state === 'upcoming' && 'font-normal text-ink-mute', s.state === 'failed' && 'text-danger', s.state === 'offer' && 'text-success')}>{s.label}</p>
               {s.at && <p className="text-[11px] text-ink-mute">{fmtDate(s.at, { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}</p>}
               {/* Remarks styled as a chat bubble, like the kit's message card. */}
-              {s.remarks && <p className="mt-1.5 inline-block rounded-2xl rounded-tl-md bg-[#F1F0F8] px-3 py-2 text-xs text-ink-soft">{s.remarks}</p>}
+              {s.remarks && <p className="mt-1.5 inline-block rounded-2xl rounded-tl-md bg-subtle px-3 py-2 text-xs text-ink-soft">{s.remarks}</p>}
             </div>
           </li>
         )

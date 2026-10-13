@@ -4,9 +4,9 @@ import { cn } from '@/components/ui/cn'
 import { Avatar } from '@/components/ui/Avatar'
 
 const OPTIONS: { value: AttendanceStatus; label: string; icon: typeof Check; on: string }[] = [
-  { value: 'present', label: 'Present', icon: Check, on: 'bg-grad text-white shadow-glow' },
-  { value: 'absent', label: 'Absent', icon: X, on: 'bg-coral text-white' },
-  { value: 'leave', label: 'Leave', icon: Minus, on: 'bg-amber text-white' },
+  { value: 'present', label: 'Present', icon: Check, on: 'bg-success text-white' },
+  { value: 'absent', label: 'Absent', icon: X, on: 'bg-danger text-white' },
+  { value: 'leave', label: 'Leave', icon: Minus, on: 'bg-warning text-white' },
 ]
 
 interface Props {
@@ -28,11 +28,11 @@ export function AttendanceGrid({ entries, value, onChange, dirty }: Props) {
             <div className="min-w-0 flex-1">
               <p className="flex items-center gap-2 truncate text-sm font-medium">
                 {e.full_name}
-                {dirty.has(e.student_id) && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-pink" title="Unsaved" />}
+                {dirty.has(e.student_id) && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400" title="Unsaved" />}
               </p>
               <p className="text-xs text-ink-mute">{e.roll_no}</p>
             </div>
-            <div className="flex shrink-0 gap-1 rounded-full bg-[#F1F0F8] p-1" role="radiogroup" aria-label={`Attendance for ${e.full_name}`}>
+            <div className="flex shrink-0 gap-1 rounded-full bg-subtle p-1" role="radiogroup" aria-label={`Attendance for ${e.full_name}`}>
               {OPTIONS.map(({ value: v, label, icon: Icon, on }) => (
                 <button
                   key={v}
@@ -44,7 +44,7 @@ export function AttendanceGrid({ entries, value, onChange, dirty }: Props) {
                   onClick={() => onChange(e.student_id, v)}
                   className={cn(
                     'flex h-8 min-w-8 items-center justify-center gap-1 rounded-full px-2 text-xs font-medium transition sm:px-3',
-                    current === v ? on : 'text-ink-mute hover:bg-white hover:text-brand-600',
+                    current === v ? on : 'text-ink-mute hover:bg-surface hover:text-ink',
                   )}
                 >
                   <Icon className="h-3.5 w-3.5" strokeWidth={2.6} />
@@ -59,7 +59,7 @@ export function AttendanceGrid({ entries, value, onChange, dirty }: Props) {
   )
 }
 
-const DOT: Record<AttendanceStatus, string> = { present: 'bg-grad', absent: 'bg-coral', leave: 'bg-amber' }
+const DOT: Record<AttendanceStatus, string> = { present: 'bg-success', absent: 'bg-danger', leave: 'bg-warning' }
 
 /** Student-facing: recent days as small capsules, with a legend. */
 export function AttendanceStrip({ records }: { records: { date: string; status: AttendanceStatus }[] }) {

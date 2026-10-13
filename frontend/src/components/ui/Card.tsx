@@ -20,11 +20,11 @@ export function CardHeader({ title, subtitle, action }: { title: ReactNode; subt
 }
 
 const statColor: Record<Tone, string> = {
-  brand: 'text-brand-600', success: 'text-brand-600', danger: 'text-coral', warning: 'text-amber', neutral: 'text-ink',
+  brand: 'text-brand-600', success: 'text-success', danger: 'text-danger', warning: 'text-warning', neutral: 'text-ink',
 }
 const statIcon: Record<Tone, string> = {
-  brand: 'bg-brand-100 text-brand-600', success: 'bg-brand-100 text-brand-600', danger: 'bg-coral-soft text-coral',
-  warning: 'bg-amber-soft text-amber', neutral: 'bg-[#F1F0F8] text-ink-soft',
+  brand: 'bg-brand-500/15 text-brand-700', success: 'bg-success/15 text-success', danger: 'bg-danger/15 text-danger',
+  warning: 'bg-warning/15 text-warning', neutral: 'bg-subtle text-ink-soft',
 }
 
 export function StatCard({ label, value, hint, icon, tone = 'brand', pink }: { label: string; value: ReactNode; hint?: ReactNode; icon?: ReactNode; tone?: Tone; pink?: boolean }) {
@@ -32,9 +32,9 @@ export function StatCard({ label, value, hint, icon, tone = 'brand', pink }: { l
     <Card className="p-4 sm:p-5">
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs text-ink-mute">{label}</p>
-        {icon && <span className={cn('grid h-9 w-9 place-items-center rounded-2xl', pink ? 'bg-pink-soft text-pink' : statIcon[tone])}>{icon}</span>}
+        {icon && <span className={cn('grid h-9 w-9 place-items-center rounded-2xl', pink ? 'bg-info/15 text-info' : statIcon[tone])}>{icon}</span>}
       </div>
-      <p className={cn('num mt-2 text-2xl sm:text-3xl', pink ? 'text-pink' : statColor[tone])}>{value}</p>
+      <p className={cn('num mt-2 text-2xl sm:text-3xl', pink ? 'text-info' : statColor[tone])}>{value}</p>
       {hint && <p className="mt-1 text-xs text-ink-mute">{hint}</p>}
     </Card>
   )
@@ -52,7 +52,7 @@ export function Progress({ value, label }: { value: number; label?: string }) {
     <div>
       {label && <p className="mb-1.5 text-[11px] text-ink-mute">{label}</p>}
       <div className="flex items-center gap-3">
-        <div className="h-2 flex-1 overflow-hidden rounded-full bg-[#EEEDF7]" role="progressbar" aria-valuenow={v} aria-valuemin={0} aria-valuemax={100}>
+        <div className="h-2 flex-1 overflow-hidden rounded-full bg-subtle" role="progressbar" aria-valuenow={v} aria-valuemin={0} aria-valuemax={100}>
           <div className="bg-grad h-full rounded-full transition-[width] duration-700" style={{ width: `${v}%` }} />
         </div>
         <span className="w-9 text-right text-xs font-medium tabular-nums text-ink-soft">{Math.round(v)}%</span>

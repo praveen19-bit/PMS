@@ -31,7 +31,7 @@ export function Modal({ open, onClose, title, description, children, footer }: P
   if (!open) return null
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6">
-      <div className="absolute inset-0 bg-[#2B2453]/30 backdrop-blur-[6px]" onClick={onClose} aria-hidden />
+      <div className="absolute inset-0 overlay backdrop-blur-[6px]" onClick={onClose} aria-hidden />
       <div
         ref={panel}
         role="dialog"
@@ -42,10 +42,10 @@ export function Modal({ open, onClose, title, description, children, footer }: P
         <div className="mx-auto mt-2 h-1 w-10 rounded-full bg-brand-200 sm:hidden" aria-hidden />
         <div className="flex items-start justify-between gap-4 px-6 pb-3 pt-4 sm:pt-6">
           <div>
-            <h2 className="text-lg font-semibold text-brand-600">{title}</h2>
+            <h2 className="text-lg font-semibold">{title}</h2>
             {description && <p className="mt-0.5 text-sm text-ink-mute">{description}</p>}
           </div>
-          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-full bg-[#F1F0F8] text-ink-soft hover:bg-brand-50 hover:text-brand-600">
+          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-full bg-subtle text-ink-soft hover:bg-brand-50 hover:text-brand-600">
             <X className="h-4 w-4" />
           </button>
         </div>

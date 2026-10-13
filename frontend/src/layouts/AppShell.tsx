@@ -10,6 +10,7 @@ import { useToast } from '@/components/ui/Toast'
 import { cn } from '@/components/ui/cn'
 import { useAuth } from '@/hooks/useAuth'
 import { DEMO_MODE } from '@/lib/config'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { CommandPalette } from './CommandPalette'
 import { UserMenu } from './UserMenu'
 import { HELP, NAV } from './nav'
@@ -101,7 +102,7 @@ export function AppShell() {
                       cn(
                         'relative flex items-center gap-3 py-3 text-sm transition',
                         collapsed ? 'justify-center px-0' : 'px-6',
-                        isActive ? 'font-medium text-brand-600' : 'text-ink-mute hover:text-brand-600',
+                        isActive ? 'bg-brand-500/10 font-medium text-brand-700' : 'text-ink-mute hover:text-ink',
                       )
                     }
                   >
@@ -141,7 +142,7 @@ export function AppShell() {
             <button onClick={() => setHelpOpen(true)} className={cn('flex w-full items-center gap-3 rounded-2xl py-2.5 text-sm text-ink-mute hover:text-brand-600', collapsed ? 'justify-center' : 'px-3')} aria-label="Help">
               <CircleHelp className="h-5 w-5" />{!collapsed && 'Help'}
             </button>
-            <button onClick={signOut} className={cn('flex w-full items-center gap-3 rounded-2xl py-2.5 text-sm text-ink-mute hover:text-coral', collapsed ? 'justify-center' : 'px-3')} aria-label="Sign out">
+            <button onClick={signOut} className={cn('flex w-full items-center gap-3 rounded-2xl py-2.5 text-sm text-ink-mute hover:text-danger', collapsed ? 'justify-center' : 'px-3')} aria-label="Sign out">
               <LogOut className="h-5 w-5" />{!collapsed && 'Sign out'}
             </button>
           </div>
@@ -155,7 +156,7 @@ export function AppShell() {
             <span className="lg:hidden"><LogoMark className="h-9 w-9 rounded-xl" /></span>
             <button
               onClick={() => setPaletteOpen(true)}
-              className="hidden h-11 max-w-md flex-1 items-center justify-between rounded-full bg-[#F1F0F8]/90 pl-5 pr-1 text-left text-sm text-ink-mute transition hover:bg-white sm:flex"
+              className="hidden h-11 max-w-md flex-1 items-center justify-between rounded-full bg-subtle pl-5 pr-1 text-left text-sm text-ink-mute transition hover:bg-surface sm:flex"
               aria-label="Search (Ctrl+K)"
             >
               search something
@@ -164,12 +165,13 @@ export function AppShell() {
 
             <div className="ml-auto flex items-center gap-2">
               {DEMO_MODE && (
-                <span className="hidden items-center gap-1.5 rounded-full bg-brand-100 px-3 py-1.5 text-xs font-medium text-brand-700 md:inline-flex" title="Sample data, saved only in this browser">
+                <span className="hidden items-center gap-1.5 rounded-full bg-brand-500/15 px-3 py-1.5 text-xs font-medium text-brand-700 md:inline-flex" title="Sample data, saved only in this browser">
                   <FlaskConical className="h-3.5 w-3.5" /> Demo
                 </span>
               )}
               <IconButton label="Search (Ctrl+K)" className="sm:hidden" onClick={() => setPaletteOpen(true)}><Search className="h-4 w-4" /></IconButton>
-              <IconButton label="Refresh data" onClick={refresh}><RefreshCw className={cn('h-4 w-4', spinning && 'animate-spin')} /></IconButton>
+              <ThemeToggle />
+              <IconButton label="Refresh data" className="hidden sm:grid" onClick={refresh}><RefreshCw className={cn('h-4 w-4', spinning && 'animate-spin')} /></IconButton>
               <div className="hidden text-right leading-tight md:block">
                 <p className="text-[13px] font-medium">{me?.profile.full_name}</p>
                 <p className="text-[11px] capitalize text-ink-mute">{role}</p>

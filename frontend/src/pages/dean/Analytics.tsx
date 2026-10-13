@@ -9,7 +9,7 @@ import { PageHeader } from '@/components/ui/PageHeader'
 import { Card, CardHeader, Progress, StatCard } from '@/components/ui/Card'
 import { Button, IconButton } from '@/components/ui/Button'
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/States'
-import { AXIS, ChartTooltip, ChipLabel, GRID, gradientDefs, VIOLET, VIOLET_SOFT } from '@/components/charts'
+import { ChartTooltip, ChipLabel, gradientDefs, useChartColors } from '@/components/charts'
 
 const SHORT: Record<string, string> = { applied: 'Applied', shortlisted: 'Shortlisted', round1_completed: 'Round 1', hr_round: 'HR round', offered: 'Offer' }
 
@@ -17,6 +17,7 @@ export default function DeanAnalytics() {
   const q = useQuery({ queryKey: ['analytics'], queryFn: api.analytics })
   const [attTable, setAttTable] = useState(false)
   const [sortDesc, setSortDesc] = useState(false)
+  const c = useChartColors()
 
   if (q.isPending)
     return (
@@ -51,10 +52,10 @@ export default function DeanAnalytics() {
       />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="students" value={totals.students} hint={`${totals.batches} batches`} icon={<GraduationCap className="h-4 w-4" />} />
+        <StatCard label="students" value={totals.students} tone="neutral" hint={`${totals.batches} batches`} icon={<GraduationCap className="h-4 w-4" />} />
         <StatCard label="drives" value={totals.drives} pink icon={<Briefcase className="h-4 w-4" />} />
-        <StatCard label="applications" value={totals.applications} tone="warning" icon={<Send className="h-4 w-4" />} />
-        <StatCard label="offers" value={totals.offers} tone="danger" hint={`${placementRate}% of students`} icon={<Trophy className="h-4 w-4" />} />
+        <StatCard label="applications" value={totals.applications} tone="brand" icon={<Send className="h-4 w-4" />} />
+        <StatCard label="offers" value={totals.offers} tone="success" hint={`${placementRate}% of students`} icon={<Trophy className="h-4 w-4" />} />
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-12 [&>*]:min-w-0">
@@ -67,21 +68,21 @@ export default function DeanAnalytics() {
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={funnelData} margin={{ top: 34, right: 12, left: -18, bottom: 0 }}>
                     {gradientDefs('fun')}
-                    <CartesianGrid vertical={false} stroke={GRID} />
-                    <XAxis dataKey="short" tick={AXIS} tickLine={false} axisLine={false} interval={0} padding={{ left: 10, right: 10 }} />
-                    <YAxis tick={AXIS} tickLine={false} axisLine={false} allowDecimals={false} />
-                    <Tooltip cursor={{ stroke: VIOLET_SOFT }} content={<ChartTooltip suffix=" applications" />} />
-                    <Area type="monotone" dataKey="count" stroke={VIOLET} strokeWidth={3} fill="url(#fun-area)"
-                      dot={{ r: 4, fill: '#fff', stroke: VIOLET, strokeWidth: 2 }} activeDot={{ r: 6, fill: '#fff', stroke: '#6A3DE8', strokeWidth: 3 }} />
+                    <CartesianGrid vertical={false} stroke={c.grid} />
+                    <XAxis dataKey="short" tick={c.axisTick} tickLine={false} axisLine={false} interval={0} padding={{ left: 10, right: 10 }} />
+                    <YAxis tick={c.axisTick} tickLine={false} axisLine={false} allowDecimals={false} />
+                    <Tooltip cursor={{ stroke: c.soft }} content={<ChartTooltip suffix=" applications" />} />
+                    <Area type="monotone" dataKey="count" stroke={c.primary} strokeWidth={2.5} fill="url(#fun-area)"
+                      dot={{ r: 4, fill: c.dotFill, stroke: c.primary, strokeWidth: 2 }} activeDot={{ r: 6, fill: c.dotFill, stroke: c.primary, strokeWidth: 3 }} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
               <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {[
                   { label: 'applied', v: funnel[0]?.count ?? 0, cls: 'text-brand-600' },
-                  { label: 'shortlisted', v: funnel[1]?.count ?? 0, cls: 'text-pink' },
-                  { label: 'HR round', v: funnel[3]?.count ?? 0, cls: 'text-amber' },
-                  { label: 'offers', v: totals.offers, cls: 'text-coral' },
+                  { label: 'shortlisted', v: funnel[1]?.count ?? 0, cls: 'text-info' },
+                  { label: 'HR round', v: funnel[3]?.count ?? 0, cls: 'text-ink' },
+                  { label: 'offers', v: totals.offers, cls: 'text-success' },
                 ].map((x) => (
                   <div key={x.label}>
                     <dt className="text-[11px] text-ink-mute">{x.label}</dt>
@@ -111,7 +112,7 @@ export default function DeanAnalytics() {
               <thead className="text-xs text-ink-mute"><tr><th className="py-2 font-normal">Batch</th><th className="font-normal">Students</th><th className="text-right font-normal">Present</th></tr></thead>
               <tbody className="divide-y divide-line">
                 {att.map((d) => (
-                  <tr key={d.name}><td className="py-2.5 font-medium">{d.name}</td><td className="tabular-nums text-ink-soft">{d.students}</td><td className={`text-right font-semibold tabular-nums ${d.pct < 75 ? 'text-coral' : 'text-brand-600'}`}>{d.pct}%</td></tr>
+                  <tr key={d.name}><td className="py-2.5 font-medium">{d.name}</td><td className="tabular-nums text-ink-soft">{d.students}</td><td className={`text-right font-semibold tabular-nums ${d.pct < 75 ? 'text-warning' : 'text-success'}`}>{d.pct}%</td></tr>
                 ))}
               </tbody>
             </table>
@@ -120,14 +121,14 @@ export default function DeanAnalytics() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={att} margin={{ top: 34, right: 8, left: -18, bottom: 0 }}>
                   {gradientDefs('att')}
-                  <CartesianGrid vertical={false} stroke={GRID} />
-                  <XAxis dataKey="name" tick={AXIS} tickLine={false} axisLine={false} interval={0} tickFormatter={(v: string) => v.replace(/^\d{4}\s/, '')} />
-                  <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tick={AXIS} tickLine={false} axisLine={false} />
-                  <ReferenceLine y={75} stroke="#EE5DA6" strokeDasharray="4 4" />
-                  <Tooltip cursor={{ fill: 'rgba(127,86,245,0.06)' }} content={<ChartTooltip suffix="% present" />} />
+                  <CartesianGrid vertical={false} stroke={c.grid} />
+                  <XAxis dataKey="name" tick={c.axisTick} tickLine={false} axisLine={false} interval={0} tickFormatter={(v: string) => v.replace(/^\d{4}\s/, '')} />
+                  <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tick={c.axisTick} tickLine={false} axisLine={false} />
+                  <ReferenceLine y={75} stroke={c.warning} strokeDasharray="4 4" />
+                  <Tooltip cursor={{ fill: c.cursor }} content={<ChartTooltip suffix="% present" />} />
                   <Bar dataKey="pct" radius={[10, 10, 10, 10]} maxBarSize={34}>
-                    {att.map((d) => <Cell key={d.name} fill={d.pct >= 75 ? 'url(#att-bar)' : VIOLET_SOFT} />)}
-                    <LabelList dataKey="pct" content={(p) => <ChipLabel {...(p as object)} highlight={best} suffix="%" />} />
+                    {att.map((d) => <Cell key={d.name} fill={d.pct >= 75 ? 'url(#att-bar)' : c.warning} />)}
+                    <LabelList dataKey="pct" content={(p) => <ChipLabel {...(p as object)} highlight={best} suffix="%" fill={c.success} />} />
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
@@ -145,8 +146,8 @@ export default function DeanAnalytics() {
                   <span className="text-ink-soft">{stageLabel(s.stage)}</span>
                   <span className="font-semibold tabular-nums">{s.count}</span>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full bg-[#EEEDF7]">
-                  <div className={`h-full rounded-full ${s.stage === 'rejected' || s.stage === 'withdrawn' ? 'bg-coral' : 'bg-grad'}`} style={{ width: `${(s.count / maxStage) * 100}%` }} />
+                <div className="h-2 overflow-hidden rounded-full bg-subtle">
+                  <div className={`h-full rounded-full ${s.stage === 'rejected' || s.stage === 'withdrawn' ? 'bg-danger' : s.stage === 'offered' ? 'bg-success' : 'bg-grad'}`} style={{ width: `${(s.count / maxStage) * 100}%` }} />
                 </div>
               </li>
             ))}

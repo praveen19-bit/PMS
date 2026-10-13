@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { ChevronRight, Trophy } from 'lucide-react'
 import { api } from '@/lib/api'
 import type { AttendanceRecord } from '@/lib/types'
@@ -15,7 +15,7 @@ import { EmptyState, ErrorState, ListSkeleton, Skeleton } from '@/components/ui/
 import { DriveCard } from '@/components/DriveCard'
 import { WeekStrip } from '@/components/WeekStrip'
 import { applicationIsActive } from '@/components/ApplicationTimeline'
-import { AXIS, ChartTooltip, GRID, gradientDefs, VIOLET } from '@/components/charts'
+import { ChartTooltip, gradientDefs, useChartColors } from '@/components/charts'
 
 /** % present per week for the last 6 weeks with records, oldest first. */
 function weeklyPresence(records: AttendanceRecord[]) {
@@ -43,6 +43,7 @@ export default function StudentHome() {
   const apps = useQuery({ queryKey: ['my-applications'], queryFn: api.myApplications })
   const apply = useApply()
   const [day, setDay] = useState(todayISO())
+  const c = useChartColors()
 
   const s = attendance.data?.summary
   const weekly = useMemo(() => weeklyPresence(attendance.data?.records ?? []), [attendance.data])
@@ -56,15 +57,15 @@ export default function StudentHome() {
   return (
     <>
       <div className="mb-6">
-        <h1 className="text-[28px] font-semibold leading-tight text-brand-600 sm:text-3xl">Hi, {firstName}.</h1>
+        <h1 className="text-[28px] font-semibold leading-tight tracking-tight sm:text-3xl">Hi, <span className="text-grad">{firstName}</span>.</h1>
         <p className="mt-1 text-sm text-ink-mute">{me?.batch ? `${me.batch.name} · ${me.student?.roll_no}` : 'Your placement journey at a glance.'}</p>
       </div>
 
       {offers.length > 0 && (
         <Card className="mb-4 flex items-center gap-3 p-4">
-          <span className="bg-grad grid h-11 w-11 shrink-0 place-items-center rounded-2xl text-white shadow-glow"><Trophy className="h-5 w-5" /></span>
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-success/15 text-success"><Trophy className="h-5 w-5" /></span>
           <div>
-            <p className="font-semibold text-brand-600">Congratulations!</p>
+            <p className="font-semibold text-success">Congratulations!</p>
             <p className="text-sm text-ink-soft">Offer from {offers.map((o) => o.drive?.company_name).join(', ')}</p>
           </div>
         </Card>
@@ -123,7 +124,7 @@ export default function StudentHome() {
         <Card className="lg:col-span-7">
           <CardHeader title="attendance update" subtitle="Share of days present, by week" />
           {attendance.isPending ? <div className="p-5"><Skeleton className="h-56" /></div> : attendance.isError ? (
-            <p className="p-5 text-sm text-coral">{attendance.error.message}</p>
+            <p className="p-5 text-sm text-danger">{attendance.error.message}</p>
           ) : (
             <div className="p-5 pt-2">
               {weekly.length > 1 ? (
@@ -131,12 +132,13 @@ export default function StudentHome() {
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={weekly} margin={{ top: 16, right: 8, left: -24, bottom: 0 }}>
                       {gradientDefs('att')}
-                      <CartesianGrid vertical={false} stroke={GRID} />
-                      <XAxis dataKey="name" tick={AXIS} tickLine={false} axisLine={false} />
-                      <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tick={AXIS} tickLine={false} axisLine={false} />
-                      <Tooltip cursor={{ stroke: '#DACEFF' }} content={<ChartTooltip suffix="% present" />} />
-                      <Area type="monotone" dataKey="pct" stroke={VIOLET} strokeWidth={3} fill="url(#att-area)"
-                        activeDot={{ r: 6, fill: '#fff', stroke: '#6A3DE8', strokeWidth: 3 }} />
+                      <CartesianGrid vertical={false} stroke={c.grid} />
+                      <XAxis dataKey="name" tick={c.axisTick} tickLine={false} axisLine={false} />
+                      <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tick={c.axisTick} tickLine={false} axisLine={false} />
+                      <ReferenceLine y={75} stroke={c.warning} strokeDasharray="4 4" />
+                      <Tooltip cursor={{ stroke: c.soft }} content={<ChartTooltip suffix="% present" />} />
+                      <Area type="monotone" dataKey="pct" stroke={c.primary} strokeWidth={2.5} fill="url(#att-area)"
+                        activeDot={{ r: 5, fill: c.dotFill, stroke: c.primary, strokeWidth: 3 }} />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
@@ -145,9 +147,9 @@ export default function StudentHome() {
               <dl className="mt-4 grid grid-cols-4 gap-2">
                 {[
                   { label: 'overall', value: `${Math.round(s!.attendance_pct)}%`, cls: 'text-brand-600' },
-                  { label: 'present', value: s!.present_count, cls: 'text-pink' },
-                  { label: 'leave', value: s!.leave_count, cls: 'text-amber' },
-                  { label: 'absent', value: s!.absent_count, cls: 'text-coral' },
+                  { label: 'present', value: s!.present_count, cls: 'text-success' },
+                  { label: 'leave', value: s!.leave_count, cls: 'text-warning' },
+                  { label: 'absent', value: s!.absent_count, cls: 'text-danger' },
                 ].map((x) => (
                   <div key={x.label}>
                     <dt className="text-[11px] text-ink-mute">{x.label}</dt>
@@ -167,7 +169,7 @@ export default function StudentHome() {
             <WeekStrip value={day} onChange={setDay} marked={driveDays} />
             <div className="mt-4 space-y-2">
               {onDay.length === 0 ? (
-                <p className="rounded-2xl bg-[#F6F5FC] px-4 py-3 text-center text-xs text-ink-mute">No drives on {fmtDate(day, { weekday: 'long', day: 'numeric', month: 'short' })}</p>
+                <p className="rounded-2xl bg-subtle/70 px-4 py-3 text-center text-xs text-ink-mute">No drives on {fmtDate(day, { weekday: 'long', day: 'numeric', month: 'short' })}</p>
               ) : onDay.map((d) => (
                 <Link key={d.id} to="/student/drives" className="flex items-center gap-3 rounded-2xl bg-brand-50 px-3 py-2.5">
                   <Avatar name={d.company_name} className="h-9 w-9" />

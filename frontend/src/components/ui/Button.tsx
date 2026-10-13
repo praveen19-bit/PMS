@@ -15,10 +15,10 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants: Record<Variant, string> = {
   primary: 'bg-grad text-white shadow-glow hover:brightness-110 active:brightness-95',
-  secondary: 'bg-white text-brand-600 ring-1 ring-inset ring-brand-200 hover:bg-brand-50',
-  soft: 'bg-[#F1F0F8] text-ink-soft hover:bg-brand-50 hover:text-brand-700',
-  ghost: 'text-ink-soft hover:bg-brand-50 hover:text-brand-700',
-  danger: 'bg-white text-coral ring-1 ring-inset ring-coral/30 hover:bg-coral-soft',
+  secondary: 'bg-surface text-ink ring-1 ring-inset ring-line hover:bg-subtle',
+  soft: 'bg-subtle text-ink-soft hover:text-ink',
+  ghost: 'text-ink-soft hover:bg-subtle hover:text-ink',
+  danger: 'bg-surface text-danger ring-1 ring-inset ring-danger/30 hover:bg-danger/10',
 }
 const sizes: Record<Size, string> = {
   sm: 'h-8 px-4 text-xs gap-1.5',
@@ -69,7 +69,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
       className={cn(
         'grid shrink-0 place-items-center rounded-full transition active:scale-95 disabled:pointer-events-none disabled:opacity-40',
         size === 'sm' ? 'h-8 w-8' : size === 'lg' ? 'h-12 w-12' : 'h-10 w-10',
-        active ? 'bg-grad text-white shadow-glow' : 'bg-white text-brand-600 shadow-sm ring-1 ring-line hover:bg-brand-50',
+        active ? 'bg-grad text-white shadow-glow' : 'bg-surface text-ink-soft ring-1 ring-line hover:bg-subtle hover:text-ink',
         className,
       )}
       {...rest}

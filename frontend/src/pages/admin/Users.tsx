@@ -104,7 +104,7 @@ export default function AdminUsers() {
                 </div>
                 <Badge tone={ROLE_TONE[u.role]} className="capitalize">{u.role}</Badge>
                 <Button variant="ghost" size="sm" onClick={() => startEdit(u)} aria-label={`Edit ${u.full_name}`}><Pencil className="h-4 w-4" /></Button>
-                <Button variant="ghost" size="sm" disabled={u.id === me?.profile.id} onClick={() => setToDelete(u)} aria-label={`Delete ${u.full_name}`}><Trash2 className="h-4 w-4 text-coral" /></Button>
+                <Button variant="ghost" size="sm" disabled={u.id === me?.profile.id} onClick={() => setToDelete(u)} aria-label={`Delete ${u.full_name}`}><Trash2 className="h-4 w-4 text-danger" /></Button>
               </li>
             ))}
           </ul>

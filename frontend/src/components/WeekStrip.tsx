@@ -29,7 +29,7 @@ export function WeekStrip({ value, onChange, marked, max }: Props) {
   const nextWeek = addDays(value, 7)
 
   return (
-    <div>
+    <div className="mx-auto max-w-xl">
       <p className="mb-3 text-center text-sm font-medium">{month}</p>
       <div className="flex items-center gap-1">
         <button onClick={() => onChange(addDays(value, -7))} aria-label="Previous week" className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-brand-600 hover:bg-brand-50">
